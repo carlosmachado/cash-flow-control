@@ -2,6 +2,7 @@ package br.com.cmachado.cashflowcontrol.infrastructure.outbox;
 
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.shared.ValueObject;
+import com.google.gson.Gson;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,29 @@ import javax.validation.constraints.NotNull;
 
 @Service
 public class OutBoxMessages {
+    private final OutBoxRepository outBoxRepository;
+
+    public OutBoxMessages(OutBoxRepository outBoxRepository) {
+        this.outBoxRepository = outBoxRepository;
+    }
 
     public Message toConsolidateBalance(TransactionId transactionId) {
-//        return new Message(serializer.toJson(new CommercialOrderIdMessage(commercialOrderId)));
-        return null;
+        var gson = new Gson();
+        var json = gson.toJson(new TransactionIdMessage(transactionId));
+        return new Message(json);
+    }
+
+    public void enqueue(String aggregateId,
+                        String aggregate,
+                        String operation,
+                        Message message) {
+        var outbox = OutBox.of(
+                aggregateId,
+                aggregate,
+                operation,
+                message
+        );
+        outBoxRepository.save(outbox);
     }
 
     @EqualsAndHashCode

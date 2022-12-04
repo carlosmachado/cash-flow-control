@@ -3,6 +3,7 @@ package br.com.cmachado.cashflowcontrol.domain.model.transaction;
 import br.com.cmachado.cashflowcontrol.domain.model.balance.Balance;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Currency;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
+import br.com.cmachado.cashflowcontrol.domain.model.transaction.events.TransactionRegistered;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Credit;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Debit;
 import br.com.cmachado.cashflowcontrol.domain.shared.AggregateRootBase;
@@ -69,6 +70,7 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
         this.amount = amount;
         this.description = description;
         this.currency = Currency.BRL;
+        registerEvent(new TransactionRegistered(this));
     }
 
     @Override
