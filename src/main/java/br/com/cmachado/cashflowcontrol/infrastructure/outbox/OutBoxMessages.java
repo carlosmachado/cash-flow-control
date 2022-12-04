@@ -1,6 +1,6 @@
 package br.com.cmachado.cashflowcontrol.infrastructure.outbox;
 
-import br.com.cmachado.cashflowcontrol.domain.model.common.transaction.TransactionId;
+import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.shared.ValueObject;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

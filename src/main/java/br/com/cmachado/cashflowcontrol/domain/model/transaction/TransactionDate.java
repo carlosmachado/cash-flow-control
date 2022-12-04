@@ -1,4 +1,4 @@
-package br.com.cmachado.cashflowcontrol.domain.model.common.transaction;
+package br.com.cmachado.cashflowcontrol.domain.model.transaction;
 
 import br.com.cmachado.cashflowcontrol.domain.shared.ValueObject;
 import lombok.EqualsAndHashCode;
@@ -7,35 +7,31 @@ import lombok.Getter;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
 @EqualsAndHashCode
 @Embeddable
 @Getter
-public class TransactionId implements ValueObject<TransactionId> {
+public class TransactionDate implements ValueObject<TransactionDate> {
     @NotNull(message = "value is required")
-    @Column(name = "transaction_id", columnDefinition = "uuid", nullable = false)
-    private UUID value;
+    @Column(name = "transaction_date", nullable = false)
+    private LocalDateTime value;
 
-    protected TransactionId() {
+    protected TransactionDate() {
     }
 
-    private TransactionId(UUID value) {
+    private TransactionDate(LocalDateTime value) {
         this.value = value;
     }
 
-    public static TransactionId code(UUID value) {
+    public static TransactionDate was(LocalDateTime value) {
         Objects.requireNonNull(value, "value cannot be null");
-        return new TransactionId(value);
-    }
-
-    public static TransactionId generate() {
-        return new TransactionId(UUID.randomUUID());
+        return new TransactionDate(value);
     }
 
     @Override
-    public boolean sameValueAs(TransactionId other) {
+    public boolean sameValueAs(TransactionDate other) {
         return other != null && other.equals(this);
     }
 

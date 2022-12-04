@@ -1,6 +1,6 @@
-package br.com.cmachado.cashflowcontrol.domain.model.credit.events;
+package br.com.cmachado.cashflowcontrol.domain.model.transaction.events;
 
-import br.com.cmachado.cashflowcontrol.domain.model.credit.Credit;
+import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Credit;
 import br.com.cmachado.cashflowcontrol.domain.shared.DomainEvent;
 import lombok.Getter;
 

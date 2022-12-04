@@ -77,17 +77,13 @@ public class Money implements ValueObject<Money> {
         return money.value.longValue() < 0;
     }
 
-    public boolean greaterThanZero() {
-        return value.compareTo(new BigDecimal(0)) > 0;
-    }
-
     @Override
     public String toString() {
         return value.toString();
     }
 
-    public String formatted() {
-        return "R$ " + value.toString();
+    public Money multiply(int value) {
+        return Money.of(this.value.multiply(new BigDecimal(value)));
     }
 }
 
