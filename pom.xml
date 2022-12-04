@@ -16,6 +16,9 @@
 	<properties>
 		<java.version>17</java.version>
 		<testcontainers.version>1.17.6</testcontainers.version>
+		<validation-api.version>2.0.1.Final</validation-api.version>
+		<hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
+		<javax.persistence-api.version>2.2</javax.persistence-api.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -46,6 +49,22 @@
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${validation-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>${javax.persistence-api.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.h2database</groupId>
