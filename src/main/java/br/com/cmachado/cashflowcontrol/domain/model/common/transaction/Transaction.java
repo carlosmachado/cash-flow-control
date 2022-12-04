@@ -47,6 +47,18 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
     @Column(name = "description", length = 2000, nullable = false)
     private String description;
 
+    protected Transaction(){}
+
+    protected Transaction(TransactionId id,
+                          TransactionDate transactionDate,
+                          Money amount,
+                          String description) {
+        this.id = id;
+        this.transactionDate = transactionDate;
+        this.amount = amount;
+        this.description = description;
+    }
+
     @Override
     public boolean sameIdentityAs(Transaction other) {
         return other != null && other.getId().equals(id);

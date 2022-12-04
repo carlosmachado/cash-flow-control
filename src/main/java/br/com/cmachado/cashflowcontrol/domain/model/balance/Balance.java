@@ -2,7 +2,6 @@ package br.com.cmachado.cashflowcontrol.domain.model.balance;
 
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Currency;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
-import br.com.cmachado.cashflowcontrol.domain.model.common.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.shared.AggregateRootBase;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
