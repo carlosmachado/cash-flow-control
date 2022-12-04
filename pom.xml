@@ -23,6 +23,7 @@
 		<springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
 		<springfox-swagger-ui.version>3.0.0</springfox-swagger-ui.version>
 		<springfox-bean-validators.version>3.0.0</springfox-bean-validators.version>
+		<modelmapper.version>2.4.1</modelmapper.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -42,7 +43,12 @@
 			<artifactId>flyway-core</artifactId>
 		</dependency>
 
-		<!-- SWAGGER -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelmapper.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>

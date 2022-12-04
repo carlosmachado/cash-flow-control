@@ -19,9 +19,9 @@ public class Money implements ValueObject<Money> {
     @Embedded
     public static final Money ZERO = new Money(BigDecimal.ZERO);
 
-    @NotNull(message = "money is required")
+    @NotNull(message = "value is required")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
-    @Column(name = "value", nullable = false, scale = 2)
+    @Column(name = "amount", nullable = false, scale = 2)
     private BigDecimal value;
 
     protected Money() {

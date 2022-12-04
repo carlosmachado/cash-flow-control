@@ -68,6 +68,7 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
         this.transactionDate = transactionDate;
         this.amount = amount;
         this.description = description;
+        this.currency = Currency.BRL;
     }
 
     @Override
@@ -76,6 +77,10 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
     }
 
     public abstract Type type();
+
+    public String getType(){
+        return type().name();
+    }
 
     public abstract void update(Balance balance);
 
