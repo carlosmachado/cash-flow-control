@@ -29,6 +29,11 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
 
     @Getter
     @Embedded
+    @NotNull(message = "transactionDate is required")
+    private TransactionDate transactionDate;
+
+    @Getter
+    @Embedded
     @NotNull(message = "currency is required")
     private Currency currency;
 
