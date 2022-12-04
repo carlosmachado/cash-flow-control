@@ -2,23 +2,22 @@ package br.com.cmachado.cashflowcontrol.domain.model.dailybalance;
 
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Currency;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
+import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionDate;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
-import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Credit;
-import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Debit;
 import br.com.cmachado.cashflowcontrol.domain.shared.AggregateRootBase;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "daily_balance",
-        schema = "cash-flow",
+        schema = "cash_flow",
         indexes = {
-                @Index(name = "daily_balance_idx_date", columnList = "date"),
-                @Index(name = "daily_balance_idx_transaction_date", columnList = "transaction_date")
+                @Index(name = "daily_balance_idx_date", columnList = "date")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "daily_balance_unq_transaction_id", columnNames = {"transaction_id"})
 })
@@ -49,6 +48,16 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
     @NotNull(message = "transactionId is required")
     private TransactionId transactionId;
 
+    @Getter
+    @Embedded
+    @NotNull(message = "transactionDate is required")
+    private TransactionDate transactionDate;
+
+    @Getter
+    @NotNull(message = "date is required")
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
+
     protected DailyBalance(){}
 
     private DailyBalance(DailyBalanceId id,
@@ -59,24 +68,10 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
         this.amount = amount;
     }
 
-    public static DailyBalance start() {
-        return new DailyBalance(
-                DailyBalanceId.generate(),
-                Currency.BRL,
-                Money.ZERO
-        );
-    }
+
 
     @Override
     public boolean sameIdentityAs(DailyBalance other) {
         return other != null && other.getId().equals(id);
-    }
-
-    public void sum(Credit credit) {
-        this.amount = this.amount.sum(credit.getAmount());
-    }
-
-    public void subtract(Debit debit) {
-        this.amount = this.amount.subtract(debit.getAmount());
     }
 }

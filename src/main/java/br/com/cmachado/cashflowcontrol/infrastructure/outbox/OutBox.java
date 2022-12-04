@@ -10,11 +10,9 @@ import java.util.UUID;
 
 @Entity(name = "OutBox")
 @Table(name = "outbox",
-        schema = "cash-flow",
+        schema = "cash_flow",
         indexes = {
-                @Index(name = "outbox_idx_aggregate_created_at_dispatched", columnList = "aggregate, created_at, dispatched"),
-                @Index(name = "outbox_idx_dispatched_created_at", columnList = "dispatched, created_at"),
-                @Index(name = "outbox_idx_aggregate_id", columnList = "aggregate_id")
+                @Index(name = "outbox_idx_dispatched_created_at", columnList = "dispatched, created_at")
         })
 public class OutBox {
     @Id

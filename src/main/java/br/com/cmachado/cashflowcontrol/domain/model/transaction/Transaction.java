@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transaction",
-        schema = "cash-flow",
+        schema = "cash_flow",
         indexes = {
                 @Index(name = "transaction_idx_type", columnList = "type"),
                 @Index(name = "transaction_idx_created_at", columnList = "created_at"),

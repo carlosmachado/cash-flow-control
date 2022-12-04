@@ -1,0 +1,10 @@
+create table cash_flow.balance (id uuid not null, value numeric(19, 2) not null, created_at timestamp not null, code varchar(255), updated_at timestamp not null, primary key (id));
+create table cash_flow.daily_balance (id uuid not null, value numeric(19, 2) not null, created_at timestamp not null, code varchar(255), date date not null, transaction_date timestamp not null, transaction_id uuid not null, primary key (id));
+create table cash_flow.outbox (id uuid not null, aggregate varchar(500) not null, aggregate_id varchar(500), created_at timestamp not null, dispatched boolean not null, dispatched_at timestamp, message text not null, operation varchar(500) not null, primary key (id));
+create table cash_flow.transaction (type varchar(31) not null, id uuid not null, value numeric(19, 2) not null, created_at timestamp not null, code varchar(255), description varchar(2000) not null, transaction_date timestamp not null, primary key (id));
+create index daily_balance_idx_date on cash_flow.daily_balance (date);
+alter table cash_flow.daily_balance add constraint daily_balance_unq_transaction_id unique (transaction_id);
+create index outbox_idx_dispatched_created_at on cash_flow.outbox (dispatched, created_at);
+create index transaction_idx_type on cash_flow.transaction (type);
+create index transaction_idx_created_at on cash_flow.transaction (created_at);
+create index transaction_idx_transaction_date on cash_flow.transaction (transaction_date);

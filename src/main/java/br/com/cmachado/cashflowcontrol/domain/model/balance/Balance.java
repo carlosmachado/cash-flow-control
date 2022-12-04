@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "balance", schema = "cash-flow")
+@Table(name = "balance", schema = "cash_flow")
 public class Balance extends AggregateRootBase<Balance> {
     @Getter
     @EmbeddedId
