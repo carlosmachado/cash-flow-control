@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DebitRepository extends JpaRepository<Credit, TransactionId> {
+public interface DebitRepository extends JpaRepository<Debit, TransactionId> {
 
 
 }

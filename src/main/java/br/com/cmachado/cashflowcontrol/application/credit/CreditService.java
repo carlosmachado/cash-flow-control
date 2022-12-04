@@ -7,11 +7,11 @@ import br.com.cmachado.cashflowcontrol.domain.model.credit.Credit;
 import br.com.cmachado.cashflowcontrol.domain.model.credit.CreditNotFoundException;
 import br.com.cmachado.cashflowcontrol.domain.model.credit.CreditRepository;
 import br.com.cmachado.cashflowcontrol.domain.shared.ApplicationService;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 @ApplicationService
 public class CreditService {
-    private CreditRepository creditRepository;
+    private final CreditRepository creditRepository;
 
     public CreditService(CreditRepository creditRepository) {
         this.creditRepository = creditRepository;
