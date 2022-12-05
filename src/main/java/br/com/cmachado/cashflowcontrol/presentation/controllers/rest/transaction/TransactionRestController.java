@@ -1,6 +1,5 @@
 package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction;
 
-import br.com.cmachado.cashflowcontrol.application.transaction.RegisterTransactionRequest;
 import br.com.cmachado.cashflowcontrol.application.transaction.TransactionService;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionRepository;
 import org.modelmapper.ModelMapper;

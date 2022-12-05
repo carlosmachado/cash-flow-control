@@ -3,9 +3,7 @@ package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailybalan
 import br.com.cmachado.cashflowcontrol.domain.model.dailybalance.DailyBalanceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,10 +21,12 @@ public class DailyBalanceRestController {
         this.dailyBalanceRepository = dailyBalanceRepository;
     }
 
-    @GetMapping
-    public ResponseEntity<DailyBalancesByDateResponse> getByDate(LocalDate date) {
+    @GetMapping("{date}")
+    public ResponseEntity<DailyBalancesByDateResponse> getByDate(@PathVariable String date) {
 
-        var balances = dailyBalanceRepository.findAllByDate(date);
+        var localDate = LocalDate.parse(date);
+
+        var balances = dailyBalanceRepository.findAllByDate(localDate);
 
         if (balances.isEmpty())
             return ResponseEntity.ok(DailyBalancesByDateResponse.empty());

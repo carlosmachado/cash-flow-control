@@ -2,6 +2,7 @@ package br.com.cmachado.cashflowcontrol.domain.model.dailybalance;
 
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Currency;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
+import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionDate;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.shared.AggregateRootBase;
@@ -29,7 +30,7 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
     private DailyBalanceId id;
 
     @Getter
-    @NotNull(message = "createdAt is required")
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -61,15 +62,27 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
     protected DailyBalance(){}
 
     private DailyBalance(DailyBalanceId id,
+                         TransactionId transactionId,
+                         TransactionDate transactionDate,
                          Currency currency,
                          Money amount) {
         this.id = id;
+        this.transactionId = transactionId;
+        this.transactionDate = transactionDate;
+        this.date = transactionDate.getValue().toLocalDate();
         this.currency = currency;
         this.amount = amount;
-        this.createdAt = LocalDateTime.now();
     }
 
-
+    public static DailyBalance store(Transaction transaction) {
+        return new DailyBalance(
+                DailyBalanceId.generate(),
+                transaction.getId(),
+                transaction.getTransactionDate(),
+                transaction.getCurrency(),
+                transaction.getAmount()
+        );
+    }
 
     @Override
     public boolean sameIdentityAs(DailyBalance other) {

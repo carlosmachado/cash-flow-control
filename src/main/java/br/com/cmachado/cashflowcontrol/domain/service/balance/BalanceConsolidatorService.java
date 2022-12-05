@@ -6,10 +6,13 @@ import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionNotFoundException;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionRepository;
 import br.com.cmachado.cashflowcontrol.domain.shared.DomainService;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.concurrent.Semaphore;
 
 @DomainService
+@Service
 public class BalanceConsolidatorService {
     private final TransactionRepository transactionRepository;
     private final BalanceRepository balanceRepository;
@@ -22,6 +25,7 @@ public class BalanceConsolidatorService {
         mutex = new Semaphore(1);
     }
 
+    @Transactional
     public void consolidate(TransactionId transactionId) throws InterruptedException {
         var transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new TransactionNotFoundException(transactionId));

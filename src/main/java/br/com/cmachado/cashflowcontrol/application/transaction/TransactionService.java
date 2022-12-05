@@ -6,6 +6,7 @@ import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionDate;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionRepository;
 import br.com.cmachado.cashflowcontrol.domain.shared.ApplicationService;
+import br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction.RegisterTransactionRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

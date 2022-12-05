@@ -1,4 +1,4 @@
-package br.com.cmachado.cashflowcontrol.application.transaction;
+package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction;
 
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import lombok.Data;
