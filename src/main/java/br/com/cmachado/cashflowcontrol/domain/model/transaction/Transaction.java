@@ -8,7 +8,6 @@ import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Credit;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Debit;
 import br.com.cmachado.cashflowcontrol.domain.shared.AggregateRootBase;
 import lombok.Getter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
