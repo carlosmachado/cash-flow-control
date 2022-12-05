@@ -1,5 +1,6 @@
 package br.com.cmachado.cashflowcontrol.domain.model.balance;
 
+import br.com.cmachado.cashflowcontrol.domain.model.balance.events.BalanceUpdated;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Currency;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.types.Credit;
@@ -23,12 +24,12 @@ public class Balance extends AggregateRootBase<Balance> {
     private BalanceId id;
 
     @Getter
-    @NotNull(message = "createdAt is required")
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Getter
-    @NotNull(message = "updatedAt is required")
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
@@ -52,6 +53,7 @@ public class Balance extends AggregateRootBase<Balance> {
         this.amount = amount;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        registerEvent(new BalanceUpdated(this));
     }
 
     public static Balance start() {
@@ -69,9 +71,11 @@ public class Balance extends AggregateRootBase<Balance> {
 
     public void sum(Credit credit) {
         this.amount = this.amount.sum(credit.getAmount());
+        registerEvent(new BalanceUpdated(this));
     }
 
     public void subtract(Debit debit) {
         this.amount = this.amount.sum(debit.getAmount());
+        registerEvent(new BalanceUpdated(this));
     }
 }

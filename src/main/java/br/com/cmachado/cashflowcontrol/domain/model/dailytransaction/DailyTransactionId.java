@@ -1,4 +1,4 @@
-package br.com.cmachado.cashflowcontrol.domain.model.dailybalance;
+package br.com.cmachado.cashflowcontrol.domain.model.dailytransaction;
 
 import br.com.cmachado.cashflowcontrol.domain.shared.ValueObject;
 import lombok.EqualsAndHashCode;
@@ -13,29 +13,29 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Embeddable
 @Getter
-public class DailyBalanceId implements ValueObject<DailyBalanceId> {
+public class DailyTransactionId implements ValueObject<DailyTransactionId> {
     @NotNull(message = "value is required")
-    @Column(name = "daily_balance_id", columnDefinition = "uuid", nullable = false)
+    @Column(name = "daily_transaction_id", columnDefinition = "uuid", nullable = false)
     private UUID value;
 
-    protected DailyBalanceId() {
+    protected DailyTransactionId() {
     }
 
-    private DailyBalanceId(UUID value) {
+    private DailyTransactionId(UUID value) {
         this.value = value;
     }
 
-    public static DailyBalanceId code(UUID value) {
+    public static DailyTransactionId code(UUID value) {
         Objects.requireNonNull(value, "value cannot be null");
-        return new DailyBalanceId(value);
+        return new DailyTransactionId(value);
     }
 
-    public static DailyBalanceId generate() {
-        return new DailyBalanceId(UUID.randomUUID());
+    public static DailyTransactionId generate() {
+        return new DailyTransactionId(UUID.randomUUID());
     }
 
     @Override
-    public boolean sameValueAs(DailyBalanceId other) {
+    public boolean sameValueAs(DailyTransactionId other) {
         return other != null && other.equals(this);
     }
 

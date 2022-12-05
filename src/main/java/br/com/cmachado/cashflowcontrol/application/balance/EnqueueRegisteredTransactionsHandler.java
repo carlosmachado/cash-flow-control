@@ -17,7 +17,9 @@ public class EnqueueRegisteredTransactionsHandler implements SubscribeTo<Transac
     @Override
     public void handle(TransactionRegistered event) {
         var transactionId = event.getTransaction().getId();
+
         var message = outBoxMessages.toConsolidateBalance(transactionId);
+
         outBoxMessages.enqueue(
                 transactionId.toString(),
                 Transaction.TRANSACTION_AGGREGATE,

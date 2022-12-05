@@ -1,7 +1,7 @@
 package br.com.cmachado.cashflowcontrol.domain.service.dailybalance;
 
-import br.com.cmachado.cashflowcontrol.domain.model.dailybalance.DailyBalance;
-import br.com.cmachado.cashflowcontrol.domain.model.dailybalance.DailyBalanceRepository;
+import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.DailyTransaction;
+import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.DailyTransactionRepository;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionNotFoundException;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionRepository;
@@ -14,24 +14,24 @@ import javax.transaction.Transactional;
 @Service
 public class DailyBalanceReportService {
     private final TransactionRepository transactionRepository;
-    private final DailyBalanceRepository dailyBalanceRepository;
+    private final DailyTransactionRepository dailyTransactionRepository;
 
     public DailyBalanceReportService(TransactionRepository transactionRepository,
-                                     DailyBalanceRepository dailyBalanceRepository) {
+                                     DailyTransactionRepository dailyTransactionRepository) {
         this.transactionRepository = transactionRepository;
-        this.dailyBalanceRepository = dailyBalanceRepository;
+        this.dailyTransactionRepository = dailyTransactionRepository;
     }
 
     @Transactional
     public void store(TransactionId transactionId) {
-        if (dailyBalanceRepository.existsByTransactionId(transactionId))
+        if (dailyTransactionRepository.existsByTransactionId(transactionId))
             return;
 
         var transaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 
-        var dailyBalance = DailyBalance.store(transaction);
+        var dailyBalance = DailyTransaction.store(transaction);
 
-        dailyBalanceRepository.save(dailyBalance);
+        dailyTransactionRepository.save(dailyBalance);
     }
 }

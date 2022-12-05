@@ -1,7 +1,8 @@
-package br.com.cmachado.cashflowcontrol.domain.model.dailybalance;
+package br.com.cmachado.cashflowcontrol.domain.model.dailytransaction;
 
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Currency;
 import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
+import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.events.DailyTransactionStored;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionDate;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
@@ -15,19 +16,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "daily_balance",
+@Table(name = "daily_transaction",
         schema = "cash_flow",
         indexes = {
-                @Index(name = "daily_balance_idx_date", columnList = "date")
+                @Index(name = "daily_transaction_idx_date", columnList = "date")
 }, uniqueConstraints = {
-        @UniqueConstraint(name = "daily_balance_unq_transaction_id", columnNames = {"transaction_id"})
+        @UniqueConstraint(name = "daily_transaction_unq_transaction_id", columnNames = {"transaction_id"})
 })
-public class DailyBalance extends AggregateRootBase<DailyBalance> {
+public class DailyTransaction extends AggregateRootBase<DailyTransaction> {
     @Getter
     @EmbeddedId
     @NotNull(message = "id is required")
     @AttributeOverride(name = "value", column = @Column(name = "id", columnDefinition = "uuid", nullable = false))
-    private DailyBalanceId id;
+    private DailyTransactionId id;
 
     @Getter
     @CreationTimestamp
@@ -59,24 +60,25 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    protected DailyBalance(){}
+    protected DailyTransaction(){}
 
-    private DailyBalance(DailyBalanceId id,
-                         TransactionId transactionId,
-                         TransactionDate transactionDate,
-                         Currency currency,
-                         Money amount) {
+    private DailyTransaction(DailyTransactionId id,
+                             TransactionId transactionId,
+                             TransactionDate transactionDate,
+                             Currency currency,
+                             Money amount) {
         this.id = id;
         this.transactionId = transactionId;
         this.transactionDate = transactionDate;
         this.date = transactionDate.getValue().toLocalDate();
         this.currency = currency;
         this.amount = amount;
+        registerEvent(new DailyTransactionStored(this));
     }
 
-    public static DailyBalance store(Transaction transaction) {
-        return new DailyBalance(
-                DailyBalanceId.generate(),
+    public static DailyTransaction store(Transaction transaction) {
+        return new DailyTransaction(
+                DailyTransactionId.generate(),
                 transaction.getId(),
                 transaction.getTransactionDate(),
                 transaction.getCurrency(),
@@ -85,7 +87,7 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
     }
 
     @Override
-    public boolean sameIdentityAs(DailyBalance other) {
+    public boolean sameIdentityAs(DailyTransaction other) {
         return other != null && other.getId().equals(id);
     }
 }

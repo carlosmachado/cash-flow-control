@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS cash_flow.balance
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS cash_flow.daily_balance
+CREATE TABLE IF NOT EXISTS cash_flow.daily_transaction
 (
     id UUID NOT NULL,
     created_at TIMESTAMP NOT NULL,
@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS cash_flow.daily_balance
     transaction_date timestamp NOT NULL,
     date date NOT NULL,
     PRIMARY KEY (id),
-    CONSTRAINT daily_balance_unq_transaction_id UNIQUE (transaction_id)
+    CONSTRAINT daily_transaction_unq_transaction_id UNIQUE (transaction_id)
 );
 
-CREATE INDEX IF NOT EXISTS daily_balance_idx_date ON cash_flow.daily_balance (date);
+CREATE INDEX IF NOT EXISTS daily_transaction_idx_date ON cash_flow.daily_transaction (date);
 
 
 CREATE TABLE IF NOT EXISTS cash_flow.outbox

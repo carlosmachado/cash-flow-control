@@ -1,4 +1,4 @@
-package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailybalance;
+package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailytransaction;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,13 +9,13 @@ import java.util.List;
 
 @Data
 @Builder
-public class DailyBalancesByDateResponse {
-    private List<DailyBalanceDTO> balances;
+public class DailyTransactionsByDateResponse {
+    private List<DailyTransactionDTO> balances;
     private int count;
     private BigDecimal consolidatedAmount;
 
-    public static DailyBalancesByDateResponse empty() {
-        return DailyBalancesByDateResponse.builder()
+    public static DailyTransactionsByDateResponse empty() {
+        return DailyTransactionsByDateResponse.builder()
                 .balances(new ArrayList<>(0))
                 .count(0)
                 .build();
