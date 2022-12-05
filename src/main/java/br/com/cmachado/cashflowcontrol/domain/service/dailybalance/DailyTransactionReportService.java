@@ -12,12 +12,12 @@ import javax.transaction.Transactional;
 
 @DomainService
 @Service
-public class DailyBalanceReportService {
+public class DailyTransactionReportService {
     private final TransactionRepository transactionRepository;
     private final DailyTransactionRepository dailyTransactionRepository;
 
-    public DailyBalanceReportService(TransactionRepository transactionRepository,
-                                     DailyTransactionRepository dailyTransactionRepository) {
+    public DailyTransactionReportService(TransactionRepository transactionRepository,
+                                         DailyTransactionRepository dailyTransactionRepository) {
         this.transactionRepository = transactionRepository;
         this.dailyTransactionRepository = dailyTransactionRepository;
     }

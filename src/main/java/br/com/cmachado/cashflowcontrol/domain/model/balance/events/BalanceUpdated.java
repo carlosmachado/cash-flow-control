@@ -1,7 +1,6 @@
 package br.com.cmachado.cashflowcontrol.domain.model.balance.events;
 
 import br.com.cmachado.cashflowcontrol.domain.model.balance.Balance;
-import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.DailyTransaction;
 import br.com.cmachado.cashflowcontrol.domain.shared.DomainEvent;
 import lombok.Getter;
 

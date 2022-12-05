@@ -1,4 +1,4 @@
-package br.com.cmachado.cashflowcontrol.domain.model.transaction;
+package br.com.cmachado.cashflowcontrol.domain.model.balance;
 
 import br.com.cmachado.cashflowcontrol.utils.PostgreSQLExtension;
 import br.com.cmachado.cashflowcontrol.utils.TableNamesUtil;
@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("itst")
 @ExtendWith(PostgreSQLExtension.class)
-class TransactionRepositoryIT {
+class BalanceRepositoryIT {
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private BalanceRepository balanceRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -31,15 +31,15 @@ class TransactionRepositoryIT {
     }
 
     @Test
-    void can_save_a_transaction() {
+    void can_save_a_balance() {
 
         var found = JdbcTestUtils.countRowsInTable(jdbcTemplate, getTableName());
 
         assertEquals(0, found);
 
-        var transaction = TestTransaction.aTransaction(Transaction.Type.DEBIT, "-100.00");
+        var balance = Balance.start();
 
-        transactionRepository.save(transaction);
+        balanceRepository.save(balance);
 
         found = JdbcTestUtils.countRowsInTable(jdbcTemplate, getTableName());
 
@@ -48,6 +48,6 @@ class TransactionRepositoryIT {
 
     @NotNull
     private static String getTableName() {
-        return TableNamesUtil.from(Transaction.class);
+        return TableNamesUtil.from(Balance.class);
     }
 }

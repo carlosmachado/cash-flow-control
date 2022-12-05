@@ -5,7 +5,6 @@ import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionDate;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionId;
-import br.com.cmachado.cashflowcontrol.domain.model.transaction.events.TransactionRegistered;
 
 import javax.persistence.*;
 

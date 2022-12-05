@@ -1,6 +1,5 @@
 package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailytransaction;
 
-import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
 import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.ConsolidatedAmount;
 import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.DailyTransactionRepository;
 import org.modelmapper.ModelMapper;

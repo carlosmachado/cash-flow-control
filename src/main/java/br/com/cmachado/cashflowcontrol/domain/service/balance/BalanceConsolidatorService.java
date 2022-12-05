@@ -16,29 +16,30 @@ import java.util.concurrent.Semaphore;
 public class BalanceConsolidatorService {
     private final TransactionRepository transactionRepository;
     private final BalanceRepository balanceRepository;
-    private Semaphore mutex;
+    private Semaphore mutex = new Semaphore(1);
 
     public BalanceConsolidatorService(TransactionRepository transactionRepository,
                                       BalanceRepository balanceRepository) {
         this.transactionRepository = transactionRepository;
         this.balanceRepository = balanceRepository;
-        mutex = new Semaphore(1);
     }
 
     @Transactional
     public void consolidate(TransactionId transactionId) throws InterruptedException {
-        var transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new TransactionNotFoundException(transactionId));
+        try{
+            mutex.acquire();
 
-        mutex.acquire();
+            var transaction = transactionRepository.findById(transactionId)
+                    .orElseThrow(() -> new TransactionNotFoundException(transactionId));
 
-        var balance = getBalance();
+            var balance = getBalance();
 
-        transaction.update(balance);
+            transaction.update(balance);
 
-        balanceRepository.save(balance);
-
-        mutex.release();
+            balanceRepository.save(balance);
+        } finally {
+            mutex.release();
+        }
     }
 
     public Balance getBalance() {

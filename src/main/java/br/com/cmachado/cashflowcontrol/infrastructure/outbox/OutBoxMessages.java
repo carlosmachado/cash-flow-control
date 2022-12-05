@@ -42,7 +42,7 @@ public class OutBoxMessages {
         @NotNull(message = "value is required")
         private String value;
 
-        private Message(String value) {
+        public Message(String value) {
             this.value = value;
         }
 

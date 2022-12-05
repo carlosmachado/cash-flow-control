@@ -1,7 +1,7 @@
 package br.com.cmachado.cashflowcontrol.infrastructure.amqp.listeners;
 
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionNotFoundException;
-import br.com.cmachado.cashflowcontrol.domain.service.dailybalance.DailyBalanceReportService;
+import br.com.cmachado.cashflowcontrol.domain.service.dailybalance.DailyTransactionReportService;
 import br.com.cmachado.cashflowcontrol.infrastructure.outbox.TransactionIdMessage;
 import br.com.cmachado.cashflowcontrol.infrastructure.outbox.dispatcher.TransactionQueueDispatcher;
 import com.google.gson.Gson;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 public class DailyBalanceUpdateListener {
     static final Logger logger = LoggerFactory.getLogger(DailyBalanceUpdateListener.class);
 
-    private final DailyBalanceReportService dailyBalanceReportService;
+    private final DailyTransactionReportService dailyTransactionReportService;
 
-    public DailyBalanceUpdateListener(DailyBalanceReportService dailyBalanceReportService) {
-        this.dailyBalanceReportService = dailyBalanceReportService;
+    public DailyBalanceUpdateListener(DailyTransactionReportService dailyTransactionReportService) {
+        this.dailyTransactionReportService = dailyTransactionReportService;
     }
 
     @RabbitListener(queues = TransactionQueueDispatcher.DAILY_BALANCE_QUEUE)
@@ -27,7 +27,7 @@ public class DailyBalanceUpdateListener {
         var transactionId = gson.fromJson(in, TransactionIdMessage.class).getTransactionId();
 
         try{
-            dailyBalanceReportService.store(transactionId);
+            dailyTransactionReportService.store(transactionId);
         }catch (TransactionNotFoundException e){
             logger.error("fail store daily balance transaction not found " + e.getMessage(), e);
         }

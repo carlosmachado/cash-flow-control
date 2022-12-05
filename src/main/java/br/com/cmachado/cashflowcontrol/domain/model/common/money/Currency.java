@@ -3,7 +3,6 @@ package br.com.cmachado.cashflowcontrol.domain.model.common.money;
 import br.com.cmachado.cashflowcontrol.domain.shared.ValueObject;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

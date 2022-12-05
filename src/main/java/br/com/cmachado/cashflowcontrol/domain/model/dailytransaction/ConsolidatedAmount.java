@@ -10,7 +10,6 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.UUID;
 
 @EqualsAndHashCode
 @Embeddable
