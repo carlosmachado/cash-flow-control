@@ -45,7 +45,7 @@ public class DailyTransactionRestController {
         var response = DailyTransactionsByDateResponse.builder()
                 .balances(dtos)
                 .count(dtos.size())
-                .consolidatedAmount(consolidatedAmount.getValue().getValue())
+                .consolidatedAmount(consolidatedAmount.getValue().getValue().toString())
                 .build();
 
         return ResponseEntity.ok(response);

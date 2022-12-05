@@ -3,7 +3,6 @@ package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailytrans
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 public class DailyTransactionsByDateResponse {
     private List<DailyTransactionDTO> balances;
     private int count;
-    private BigDecimal consolidatedAmount;
+    private String consolidatedAmount;
 
     public static DailyTransactionsByDateResponse empty() {
         return DailyTransactionsByDateResponse.builder()
