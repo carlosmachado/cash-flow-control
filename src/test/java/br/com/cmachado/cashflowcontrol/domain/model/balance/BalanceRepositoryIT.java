@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("itst")
 @ExtendWith(PostgreSQLExtension.class)
-class BalanceRepositoryIT {
+public class BalanceRepositoryIT {
 
     @Autowired
     private BalanceRepository balanceRepository;
@@ -31,7 +31,7 @@ class BalanceRepositoryIT {
     }
 
     @Test
-    void can_save_a_balance() {
+    public void can_save_a_balance() {
 
         var found = JdbcTestUtils.countRowsInTable(jdbcTemplate, getTableName());
 

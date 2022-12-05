@@ -1,7 +1,6 @@
 package br.com.cmachado.cashflowcontrol.domain.model.dailytransaction;
 
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
-import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionRepository;
 import br.com.cmachado.cashflowcontrol.utils.PostgreSQLExtension;
 import br.com.cmachado.cashflowcontrol.utils.TableNamesUtil;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("itst")
 @ExtendWith(PostgreSQLExtension.class)
-class DailyTransactionRepositoryIT {
+public class DailyTransactionRepositoryIT {
 
     @Autowired
     private DailyTransactionRepository dailyTransactionRepository;
@@ -33,7 +32,7 @@ class DailyTransactionRepositoryIT {
     }
 
     @Test
-    void can_save_a_daily_transaction() {
+    public void can_save_a_daily_transaction() {
 
         var found = JdbcTestUtils.countRowsInTable(jdbcTemplate, getTableName());
 

@@ -2,7 +2,6 @@ package br.com.cmachado.cashflowcontrol.domain.model.dailytransaction;
 
 import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.events.DailyTransactionStored;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
-import br.com.cmachado.cashflowcontrol.domain.model.transaction.events.TransactionRegistered;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

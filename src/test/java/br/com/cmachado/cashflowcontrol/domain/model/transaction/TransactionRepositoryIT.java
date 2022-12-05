@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("itst")
 @ExtendWith(PostgreSQLExtension.class)
-class TransactionRepositoryIT {
+public class TransactionRepositoryIT {
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -31,7 +31,7 @@ class TransactionRepositoryIT {
     }
 
     @Test
-    void can_save_a_transaction() {
+    public void can_save_a_transaction() {
 
         var found = JdbcTestUtils.countRowsInTable(jdbcTemplate, getTableName());
 
