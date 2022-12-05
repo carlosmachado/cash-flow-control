@@ -23,12 +23,12 @@ public class Balance extends AggregateRootBase<Balance> {
     private BalanceId id;
 
     @Getter
-    @CreationTimestamp
+    @NotNull(message = "createdAt is required")
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Getter
-    @UpdateTimestamp
+    @NotNull(message = "updatedAt is required")
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
@@ -50,6 +50,8 @@ public class Balance extends AggregateRootBase<Balance> {
         this.id = id;
         this.currency = currency;
         this.amount = amount;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public static Balance start() {

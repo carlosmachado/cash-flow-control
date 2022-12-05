@@ -1,5 +1,6 @@
 package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.balance;
 
+import br.com.cmachado.cashflowcontrol.domain.model.balance.Balance;
 import br.com.cmachado.cashflowcontrol.domain.model.balance.BalanceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,16 @@ public class BalanceRestController {
     }
 
     @GetMapping
-    public ResponseEntity<BalanceDTO> getAll() {
+    public ResponseEntity<BalanceDTO> getDefault() {
 
-        var balance = balanceRepository.findAll().get(0);
+        var balances = balanceRepository.findAll();
+
+        Balance balance;
+
+        if (balances.isEmpty())
+            balance = Balance.start();
+        else
+            balance = balances.get(0);
 
         var dto = modelMapper.map(balance, BalanceDTO.class);
 

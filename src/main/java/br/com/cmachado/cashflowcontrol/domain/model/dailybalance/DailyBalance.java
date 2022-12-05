@@ -29,7 +29,7 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
     private DailyBalanceId id;
 
     @Getter
-    @CreationTimestamp
+    @NotNull(message = "createdAt is required")
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -66,6 +66,7 @@ public class DailyBalance extends AggregateRootBase<DailyBalance> {
         this.id = id;
         this.currency = currency;
         this.amount = amount;
+        this.createdAt = LocalDateTime.now();
     }
 
 

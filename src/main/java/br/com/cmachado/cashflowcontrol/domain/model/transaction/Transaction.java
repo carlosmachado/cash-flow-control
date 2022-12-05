@@ -38,7 +38,7 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
     private String type;//hibernate @DiscriminatorColumn
 
     @Getter
-    @CreationTimestamp
+    @NotNull(message = "createdAt is required")
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -73,6 +73,7 @@ public abstract class Transaction extends AggregateRootBase<Transaction> {
         this.amount = amount;
         this.description = description;
         this.currency = Currency.BRL;
+        this.createdAt = LocalDateTime.now();
         registerEvent(new TransactionRegistered(this));
     }
 
