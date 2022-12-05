@@ -1,6 +1,10 @@
 package br.com.cmachado.cashflowcontrol.infrastructure.mapper;
 
+import br.com.cmachado.cashflowcontrol.domain.model.balance.Balance;
+import br.com.cmachado.cashflowcontrol.domain.model.dailytransaction.DailyTransaction;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
+import br.com.cmachado.cashflowcontrol.presentation.controllers.rest.balance.BalanceDTO;
+import br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailytransaction.DailyTransactionDTO;
 import br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction.TransactionDTO;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -20,6 +24,10 @@ public class ModelMapperConfig {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
 
         modelMapper.createTypeMap(Transaction.class, TransactionDTO.class);
+
+        modelMapper.createTypeMap(Balance.class, BalanceDTO.class);
+
+        modelMapper.createTypeMap(DailyTransaction.class, DailyTransactionDTO.class);
 
         modelMapper.addConverter(optionalConverter());
 
