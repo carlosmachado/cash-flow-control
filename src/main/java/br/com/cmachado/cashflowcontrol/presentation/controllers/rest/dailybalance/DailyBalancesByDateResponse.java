@@ -12,6 +12,7 @@ import java.util.List;
 public class DailyBalancesByDateResponse {
     private List<DailyBalanceDTO> balances;
     private int count;
+    private BigDecimal consolidatedAmount;
 
     public static DailyBalancesByDateResponse empty() {
         return DailyBalancesByDateResponse.builder()

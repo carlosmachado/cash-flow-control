@@ -72,6 +72,6 @@ public class Balance extends AggregateRootBase<Balance> {
     }
 
     public void subtract(Debit debit) {
-        this.amount = this.amount.subtract(debit.getAmount());
+        this.amount = this.amount.sum(debit.getAmount());
     }
 }

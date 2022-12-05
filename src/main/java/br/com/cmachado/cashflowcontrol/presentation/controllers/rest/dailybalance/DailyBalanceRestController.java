@@ -1,9 +1,13 @@
 package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.dailybalance;
 
+import br.com.cmachado.cashflowcontrol.domain.model.common.money.Money;
 import br.com.cmachado.cashflowcontrol.domain.model.dailybalance.DailyBalanceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +35,10 @@ public class DailyBalanceRestController {
         if (balances.isEmpty())
             return ResponseEntity.ok(DailyBalancesByDateResponse.empty());
 
+        var consolidatedAmount = Money.ZERO;
+        for (var bal : balances.get())
+            consolidatedAmount = consolidatedAmount.sum(bal.getAmount());
+
         List<DailyBalanceDTO> dtos = balances.get()
                 .stream()
                 .map(bal -> modelMapper.map(bal, DailyBalanceDTO.class))
@@ -39,6 +47,7 @@ public class DailyBalanceRestController {
         var response = DailyBalancesByDateResponse.builder()
                 .balances(dtos)
                 .count(dtos.size())
+                .consolidatedAmount(consolidatedAmount.getValue())
                 .build();
 
         return ResponseEntity.ok(response);
