@@ -1,22 +1,21 @@
 package br.com.cmachado.cashflowcontrol.infrastructure.outbox.dispatcher;
 
+import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PubSubDispatchFactory {
+public class QueueDispatcherFactory {
     private final BeanFactory beanFactory;
 
-    public PubSubDispatchFactory(BeanFactory beanFactory) {
+    public QueueDispatcherFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
-    public PubSubDispatcher dispatcherFor(String aggregate) {
+    public QueueDispatcher dispatcherFor(String aggregate) {
         switch (aggregate) {
-//            case "TRANSACTION":
-//                return beanFactory.getBean(CommercialOrderPubSubDispatcher.class);
-//            case "BALANCE":
-//                return beanFactory.getBean(OrderPubSubDispatcher.class);
+            case Transaction.TRANSACTION_AGGREGATE:
+                return beanFactory.getBean(TransactionQueueDispatcher.class);
             default:
                 throw new IllegalArgumentException("dispatcher not found for aggregate: " + aggregate);
         }

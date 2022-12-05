@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Transaction extends AggregateRootBase<Transaction> {
+    public static final String TRANSACTION_AGGREGATE = "TRANSACTION";
+    public static final String REGISTERED_OPERATION = "REGISTERED";
+
     @Getter
     @EmbeddedId
     @NotNull(message = "id is required")

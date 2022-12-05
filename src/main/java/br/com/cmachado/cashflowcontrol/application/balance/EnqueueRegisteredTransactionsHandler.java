@@ -7,13 +7,10 @@ import br.com.cmachado.cashflowcontrol.infrastructure.outbox.OutBoxMessages;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BalanceUpdateHandler implements SubscribeTo<TransactionRegistered> {
-    public static final String TRANSACTION_AGGREGATE = Transaction.class.getName().toUpperCase();
-    public static final String REGISTERED_OPERATION = "REGISTERED";
-
+public class EnqueueRegisteredTransactionsHandler implements SubscribeTo<TransactionRegistered> {
     private final OutBoxMessages outBoxMessages;
 
-    public BalanceUpdateHandler(OutBoxMessages outBoxMessages) {
+    public EnqueueRegisteredTransactionsHandler(OutBoxMessages outBoxMessages) {
         this.outBoxMessages = outBoxMessages;
     }
 
@@ -23,8 +20,8 @@ public class BalanceUpdateHandler implements SubscribeTo<TransactionRegistered> 
         var message = outBoxMessages.toConsolidateBalance(transactionId);
         outBoxMessages.enqueue(
                 transactionId.toString(),
-                TRANSACTION_AGGREGATE,
-                REGISTERED_OPERATION,
+                Transaction.TRANSACTION_AGGREGATE,
+                Transaction.REGISTERED_OPERATION,
                 message
         );
     }

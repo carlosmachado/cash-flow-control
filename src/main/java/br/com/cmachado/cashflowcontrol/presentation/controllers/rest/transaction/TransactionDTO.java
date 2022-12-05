@@ -1,11 +1,8 @@
-package br.com.cmachado.cashflowcontrol.presentation.controllers.rest;
+package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction;
 
-import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 public class TransactionDTO {

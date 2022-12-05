@@ -1,7 +1,7 @@
 package br.com.cmachado.cashflowcontrol.infrastructure.mapper;
 
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
-import br.com.cmachado.cashflowcontrol.presentation.controllers.rest.TransactionDTO;
+import br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction.TransactionDTO;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

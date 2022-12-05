@@ -13,12 +13,12 @@ public class DispatchOutBoxScheduling {
     static final Logger logger = LoggerFactory.getLogger(DispatchOutBoxScheduling.class);
 
     private final OutBoxRepository outBoxRepository;
-    private final PubSubDispatchFactory pubSubDispatchFactory;
+    private final QueueDispatcherFactory queueDispatcherFactory;
 
     public DispatchOutBoxScheduling(OutBoxRepository outBoxRepository,
-                                    PubSubDispatchFactory pubSubDispatchFactory) {
+                                    QueueDispatcherFactory queueDispatcherFactory) {
         this.outBoxRepository = outBoxRepository;
-        this.pubSubDispatchFactory = pubSubDispatchFactory;
+        this.queueDispatcherFactory = queueDispatcherFactory;
     }
 
     @Scheduled(fixedDelay = 15000)
@@ -32,7 +32,7 @@ public class DispatchOutBoxScheduling {
             logger.info("Sending " + outBox.toString() + " to queue.");
 
             try {
-                var dispatcher = pubSubDispatchFactory.dispatcherFor(outBox.getAggregate());
+                var dispatcher = queueDispatcherFactory.dispatcherFor(outBox.getAggregate());
 
                 dispatcher.dispatch(outBox);
 

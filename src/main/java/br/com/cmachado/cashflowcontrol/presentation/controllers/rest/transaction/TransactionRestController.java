@@ -1,4 +1,4 @@
-package br.com.cmachado.cashflowcontrol.presentation.controllers.rest;
+package br.com.cmachado.cashflowcontrol.presentation.controllers.rest.transaction;
 
 import br.com.cmachado.cashflowcontrol.application.transaction.RegisterTransactionRequest;
 import br.com.cmachado.cashflowcontrol.application.transaction.TransactionService;
