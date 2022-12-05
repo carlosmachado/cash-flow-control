@@ -15,21 +15,21 @@ import java.util.stream.Collectors;
 @RequestMapping("/transactions")
 public class TransactionRestController {
     private final ModelMapper modelMapper;
-    private final TransactionService transactionService;
+    private final TransactionService transactionServiceImpl;
     private final TransactionRepository transactionRepository;
 
     public TransactionRestController(ModelMapper modelMapper,
-                                     TransactionService transactionService,
+                                     TransactionService transactionServiceImpl,
                                      TransactionRepository transactionRepository) {
         this.modelMapper = modelMapper;
-        this.transactionService = transactionService;
+        this.transactionServiceImpl = transactionServiceImpl;
         this.transactionRepository = transactionRepository;
     }
 
     @PostMapping
     public ResponseEntity<TransactionDTO> register(@RequestBody @Valid RegisterTransactionRequest request) {
 
-        var transaction = transactionService.execute(request);
+        var transaction = transactionServiceImpl.execute(request);
 
         var dto = modelMapper.map(transaction, TransactionDTO.class);
 

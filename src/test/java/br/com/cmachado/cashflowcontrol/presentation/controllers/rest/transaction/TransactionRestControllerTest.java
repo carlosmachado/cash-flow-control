@@ -40,7 +40,7 @@ public class TransactionRestControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private TransactionService transactionService;
+    private TransactionService transactionServiceImpl;
 
     @MockBean
     private TransactionRepository transactionRepository;
@@ -54,7 +54,7 @@ public class TransactionRestControllerTest {
         var transaction = TestTransaction.aTransaction(type, amount);
 
         doReturn(transaction)
-                .when(transactionService)
+                .when(transactionServiceImpl)
                 .execute(Mockito.any(RegisterTransactionRequest.class));
 
         var request = new RegisterTransactionRequest();
