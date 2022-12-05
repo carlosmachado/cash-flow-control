@@ -21,16 +21,16 @@ public class PostgreSQLExtension implements BeforeAllCallback, AfterAllCallback 
 
     public static PostgreSQLContainer<?> startContainer() {
         PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
-                .withDatabaseName("tst")
+                .withDatabaseName("cash_flow_test")
                 .withUsername("postgres")
-                .withPassword("postgres")
+                .withPassword("docker")
                 .withExposedPorts(5432);
 
         postgres.start();
-        String jdbcUrl = String.format("jdbc:postgresql://localhost:%d/tst", postgres.getFirstMappedPort());
+        String jdbcUrl = String.format("jdbc:postgresql://localhost:%d/cash_flow_test", postgres.getFirstMappedPort());
         System.setProperty("spring.datasource.url", jdbcUrl);
         System.setProperty("spring.datasource.username", "postgres");
-        System.setProperty("spring.datasource.password", "postgres");
+        System.setProperty("spring.datasource.password", "docker");
 
         return postgres;
     }

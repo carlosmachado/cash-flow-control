@@ -65,7 +65,7 @@ public class BalanceConsolidatorServiceTest {
 
         var target = getTarget();
 
-        int count = 2;
+        int count = 10;
         var executorService = Executors.newFixedThreadPool(count);
         IntStream.range(1, count)
                 .forEach(user -> executorService.execute(() -> {
