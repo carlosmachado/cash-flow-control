@@ -1,5 +1,6 @@
 package br.com.cmachado.cashflowcontrol.application.transaction;
 
+import br.com.cmachado.cashflowcontrol.application.transaction.impl.TransactionServiceImpl;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TestTransaction;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.Transaction;
 import br.com.cmachado.cashflowcontrol.domain.model.transaction.TransactionRepository;
@@ -54,7 +55,7 @@ public class TransactionServiceTest {
 
     @NotNull
     private TransactionService getTarget() {
-        return new TransactionService(transactionRepository);
+        return new TransactionServiceImpl(transactionRepository);
     }
 
     @Test
