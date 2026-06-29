@@ -1,0 +1,27 @@
+@startuml c4-container
+' C4 Level 2 - Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Cash Flow Control - Container Diagram
+
+Person(client, "Cliente", "Comerciante / sistema")
+
+System_Boundary(cfc, "Cash Flow Control") {
+  Container(txapi, "transaction-service", "Spring Boot 3 / Java 21", "POST/GET /transactions; grava transação + outbox; dispatcher publica eventos")
+  Container(consapi, "consolidation-service", "Spring Boot 3 / Java 21", "Consome eventos; GET /balances, /daily-transactions")
+  ContainerQueue(rmq, "RabbitMQ", "AMQP", "Filas balance_update e daily_balance_update")
+  ContainerDb(pg, "PostgreSQL", "db cash_flow", "schema transaction (transaction, outbox)\nschema consolidation (balance, daily_transaction)")
+}
+
+System_Ext(obs, "Prometheus + Grafana", "Métricas via /actuator/prometheus")
+
+Rel(client, txapi, "Registra/lista lançamentos", "HTTPS/REST")
+Rel(client, consapi, "Consulta saldo/relatório", "HTTPS/REST")
+Rel(txapi, pg, "Lê/grava schema transaction", "JDBC")
+Rel(txapi, rmq, "Publica eventos (via outbox)", "AMQP")
+Rel(rmq, consapi, "Entrega eventos", "AMQP")
+Rel(consapi, pg, "Lê/grava schema consolidation", "JDBC")
+Rel(obs, txapi, "Scrape métricas", "HTTP")
+Rel(obs, consapi, "Scrape métricas", "HTTP")
+
+@enduml

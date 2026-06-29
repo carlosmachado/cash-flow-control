@@ -1,116 +1,119 @@
 # Cash Flow Control
 
-Backend para controle de fluxo de caixa. A aplicação registra transações de crédito e
-débito, mantém o saldo consolidado e gera uma visão diária das movimentações.
+Controle de fluxo de caixa de um comerciante: registro de lançamentos
+(créditos/débitos) e saldo diário consolidado.
 
-## Funcionalidades
+Monorepo Maven com **dois serviços independentes** + um shared kernel:
 
-- Registro de transações financeiras com data, tipo, valor e descrição.
-- Consulta de todas as transações registradas.
-- Consolidação assíncrona do saldo geral.
-- Armazenamento de lançamentos por dia para relatório diário.
-- Consulta do saldo atual.
-- Consulta das transações de um dia com total consolidado.
+```
+cash-flow-control/            parent pom (Spring Boot 3.3 / Java 21)
+├── shared-kernel/            blocos DDD, Money, contrato de integração, JSON
+├── transaction-service/      Lançamentos  (porta 8080) — produtor
+├── consolidation-service/    Consolidado  (porta 8081) — consumidor
+├── docs/                     documentação de arquitetura (C4, ADRs, NFR, custo)
+├── observability/            Prometheus + provisioning do Grafana
+└── docker-compose.yml        pg + rabbitmq + serviços + prometheus + grafana
+```
+
+A documentação completa de arquitetura está em **[docs/](docs/README.md)**.
+
+## Arquitetura em uma frase
+
+O `transaction-service` grava o lançamento e um registro **outbox** na mesma
+transação; um dispatcher publica no **RabbitMQ**; o `consolidation-service`
+consome e mantém saldo e relatório diário. A mensagem carrega o estado completo
+do lançamento (*event-carried state*), então o consolidado **nunca** lê o banco
+do lançamento — por isso lançamentos seguem disponíveis se o consolidado cair.
 
 ## Stack
 
-- Java 17, Spring Boot 2.4
-- PostgreSQL + Flyway
-- RabbitMQ
-- Maven
-- JPA/Hibernate, Lombok, ModelMapper
-- Testcontainers para testes de integração
+Java 21, Spring Boot 3.3, PostgreSQL + Flyway, RabbitMQ, Spring AMQP,
+JPA/Hibernate, ModelMapper, springdoc-openapi, Actuator + Micrometer/Prometheus,
+Spring Security (OAuth2 Resource Server), Testcontainers, Docker Compose.
 
-## Arquitetura
+## Pré-requisito de build
 
-O projeto segue uma organização inspirada em Domain-Driven Design:
-
-```text
-domain/         agregados, value objects, eventos e serviços de domínio
-application/    casos de uso da aplicação
-infrastructure/ detalhes técnicos como AMQP, outbox, HTTP, Hibernate e timezone
-presentation/   controllers REST
-```
-
-Quando uma transação é registrada, o domínio publica o evento
-`TransactionRegistered`. Esse evento cria uma mensagem na tabela de outbox. Em perfil
-`local`, um job periódico despacha as mensagens pendentes para duas filas RabbitMQ:
-
-- `balance_update`: consolida a transação no saldo geral.
-- `daily_balance_update`: salva a transação no relatório diário.
-
-## Regras de negócio
-
-- Transações do tipo `CREDIT` sempre entram com valor positivo.
-- Transações do tipo `DEBIT` sempre entram com valor negativo.
-- O saldo começa em `BRL 0.00` quando ainda não existe registro.
-- Cada transação pode gerar apenas um lançamento diário.
-
-## Endpoints
-
-### `POST /transactions`
-
-Registra uma nova transação.
-
-```json
-{
-  "transactionDate": "2025-01-01T10:00:00",
-  "type": "CREDIT",
-  "amount": 100.00,
-  "description": "Initial deposit"
-}
-```
-
-### `GET /transactions`
-
-Lista todas as transações registradas.
-
-### `GET /balances`
-
-Retorna o saldo consolidado atual.
-
-### `GET /dailyTransactions/{date}`
-
-Retorna as transações de uma data e o valor consolidado do dia.
+O build exige **JDK 21** (o `java.version` é 21). Se o `java` padrão for outro:
 
 ```bash
-curl "http://localhost:8080/dailyTransactions/2025-01-01"
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
 ```
 
-## Como executar
-
-Criar o container PostgreSQL:
+## Rodar tudo com Docker (recomendado)
 
 ```bash
-docker run --name postgres-db -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
+docker compose up --build
 ```
 
-Criar a database da aplicação:
+Sobe PostgreSQL, RabbitMQ, os dois serviços, Prometheus e Grafana.
+
+| Serviço | URL |
+|---------|-----|
+| transaction-service | http://localhost:8080 |
+| consolidation-service | http://localhost:8081 |
+| Swagger (cada serviço) | `/swagger-ui.html` |
+| RabbitMQ management | http://localhost:15672 (guest/guest) |
+| Prometheus | http://localhost:9090 |
+| Grafana | http://localhost:3000 |
+
+## Rodar localmente (sem Docker)
+
+Suba PostgreSQL e RabbitMQ e crie o banco:
 
 ```bash
-docker exec -it postgres-db psql -U postgres -c "create database cash_flow"
-```
-
-Criar a database dos testes integrados:
-
-```bash
-docker exec -it postgres-db psql -U postgres -c "create database cash_flow_test"
-```
-
-Criar o container RabbitMQ:
-
-```bash
+docker run --name postgres-db -e POSTGRES_PASSWORD=docker -e POSTGRES_DB=cash_flow -p 5432:5432 -d postgres:16
 docker run -d -p 5672:5672 -p 15672:15672 --name my-rabbit rabbitmq:3-management
 ```
 
-Executar a aplicação:
+Em dois terminais (cada serviço cria seu schema via Flyway no startup):
 
 ```bash
-./mvnw spring-boot:run
+./mvnw -pl transaction-service -am spring-boot:run
+./mvnw -pl consolidation-service -am spring-boot:run
 ```
+
+## Usando a API
+
+```bash
+# 1) registra um crédito (transaction-service)
+curl -X POST http://localhost:8080/transactions \
+  -H 'Content-Type: application/json' \
+  -d '{"transactionDate":"2025-01-01T10:00:00","type":"CREDIT","amount":100.00,"description":"Deposito"}'
+
+# 2) lista lançamentos
+curl http://localhost:8080/transactions
+
+# 3) saldo consolidado (consolidation-service) — atualiza de forma assíncrona
+curl http://localhost:8081/balances
+
+# 4) lançamentos consolidados de um dia
+curl http://localhost:8081/daily-transactions/2025-01-01
+```
+
+## Regras de negócio
+
+- `CREDIT` entra com valor positivo; `DEBIT` com valor negativo (normalizado).
+- Saldo inicia em `BRL 0.00`.
+- Cada lançamento gera no máximo um registro diário (idempotência por `transaction_id`).
 
 ## Testes
 
 ```bash
-./mvnw test
+./mvnw clean test
 ```
+
+Testes unitários de domínio e aplicação nos três módulos (sem dependência de
+infraestrutura). Evolução: testes de integração com Testcontainers (deps já
+incluídas) cobrindo o fluxo outbox → fila → consolidação.
+
+## Segurança
+
+Por padrão as APIs ficam abertas (uso local). Para exigir JWT, defina
+`app.security.jwt.enabled=true` e o `issuer-uri` — ver
+[docs/nfr/security.md](docs/nfr/security.md).
+
+## Observabilidade
+
+`/actuator/health` e `/actuator/prometheus` em ambos os serviços; Prometheus e
+Grafana já provisionados no compose — ver
+[docs/nfr/observability.md](docs/nfr/observability.md).

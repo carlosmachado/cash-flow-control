@@ -1,0 +1,25 @@
+@startuml resilience-flow
+title Resiliência - lançamento independe do consolidado (RNF1)
+
+skinparam shadowing false
+left to right direction
+
+actor Cliente as C
+rectangle "transaction-service" as TX
+database "Outbox" as OB
+rectangle "Dispatcher" as D
+queue "RabbitMQ" as Q
+rectangle "consolidation-service\n(pode estar fora)" as CO #FDECEA
+
+C --> TX
+TX --> OB
+OB --> D
+D --> Q
+Q --> CO
+
+note bottom of TX
+  POST /transactions confirma no commit do outbox.
+  Não toca RabbitMQ nem consolidado -> 201 mesmo com consolidado fora.
+end note
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml sequence-transaction-flow
+title Fluxo de um lançamento (outbox + event-carried state)
+
+actor Cliente
+participant "transaction-service" as TX
+database "Outbox (DB)" as OB
+participant "Dispatcher" as D
+queue "RabbitMQ" as Q
+participant "consolidation-service" as CO
+database "Consolidation DB" as CDB
+
+Cliente -> TX : POST /transactions
+activate TX
+TX -> OB : salva Transaction + Outbox (mesma transação)
+TX --> Cliente : 201 Created
+deactivate TX
+
+D -> OB : lê pendentes (dispatched=false)
+D -> Q : publica TransactionRegisteredMessage
+D -> OB : marca dispatched=true
+
+Q -> CO : balance_update
+activate CO
+CO -> CDB : lock + apply(saldo)
+deactivate CO
+
+Q -> CO : daily_balance_update
+activate CO
+CO -> CDB : grava DailyTransaction (idempotente)
+deactivate CO
+
+note over Cliente, TX
+  O 201 é retornado antes de tocar RabbitMQ/consolidado.
+  Por isso lançamentos seguem disponíveis se o consolidado cair (RNF1).
+end note
+
+@enduml

@@ -1,0 +1,27 @@
+@startuml c4-component-transaction-service
+' C4 Level 3 - Components (transaction-service)
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title transaction-service - Component Diagram
+
+Container_Boundary(tx, "transaction-service") {
+  Component(ctrl, "TransactionRestController", "Spring MVC", "POST/GET /transactions")
+  Component(svc, "TransactionService", "Application Service", "Cria Credit/Debit, salva")
+  Component(agg, "Transaction (Credit/Debit)", "Aggregate", "Invariantes; publica TransactionRegistered")
+  Component(handler, "EnqueueRegisteredTransactionsHandler", "Domain event handler", "Grava mensagem no outbox")
+  Component(outbox, "OutBox + OutBoxMessages", "Outbox", "Persistência do evento na mesma transação")
+  Component(disp, "DispatchOutBoxScheduling", "Scheduler", "Publica pendentes no RabbitMQ")
+}
+
+ContainerDb(pg, "PostgreSQL", "schema transaction")
+ContainerQueue(rmq, "RabbitMQ", "balance_update / daily_balance_update")
+
+Rel(ctrl, svc, "execute(request)")
+Rel(svc, agg, "register(...)")
+Rel(agg, handler, "TransactionRegistered (before commit)")
+Rel(handler, outbox, "enqueue(message)")
+Rel(svc, pg, "save transaction + outbox", "JDBC")
+Rel(disp, pg, "lê outbox pendente", "JDBC")
+Rel(disp, rmq, "publica TransactionRegisteredMessage", "AMQP")
+
+@enduml

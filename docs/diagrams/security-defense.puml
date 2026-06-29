@@ -1,0 +1,19 @@
+@startuml security-defense
+title Segurança - defesa em profundidade (produção)
+
+skinparam shadowing false
+left to right direction
+
+actor Cliente as C
+rectangle "API Gateway" as GW
+rectangle "transaction-service" as TX
+rectangle "consolidation-service" as CO
+queue "RabbitMQ\n(rede privada)" as Q
+
+C --> GW : TLS + JWT
+GW --> TX : mTLS
+GW --> CO : mTLS
+TX --> Q : credenciais por ambiente
+CO --> Q : credenciais por ambiente
+
+@enduml

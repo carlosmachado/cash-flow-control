@@ -1,0 +1,18 @@
+@startuml c4-context
+' C4 Level 1 - System Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Cash Flow Control - System Context
+
+Person(merchant, "Comerciante / Sistema cliente", "Registra lançamentos e consulta saldo/relatório")
+
+System_Boundary(cfc, "Cash Flow Control") {
+  System(tx, "transaction-service", "Lançamentos (créditos/débitos)")
+  System(cons, "consolidation-service", "Saldo consolidado e relatório diário")
+}
+
+Rel(merchant, tx, "Registra/consulta lançamentos", "HTTPS/REST")
+Rel(merchant, cons, "Consulta saldo e relatório diário", "HTTPS/REST")
+Rel(tx, cons, "Eventos de lançamento", "RabbitMQ (assíncrono)")
+
+@enduml

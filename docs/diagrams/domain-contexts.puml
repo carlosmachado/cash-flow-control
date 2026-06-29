@@ -1,0 +1,27 @@
+@startuml domain-contexts
+title Bounded Contexts e relação Customer/Supplier
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Bounded Context: Lançamentos\n(transaction-service)" as L #E8F0FE {
+  class "Transaction\n(Credit / Debit)" as T
+}
+
+package "Bounded Context: Consolidação\n(consolidation-service)" as C #E6F4EA {
+  class "Balance" as B
+  class "DailyTransaction" as D
+}
+
+T --> B : TransactionRegistered\n(event-carried state)
+T --> D : TransactionRegistered
+
+note bottom of L
+  Upstream (Supplier) — produz o evento
+end note
+note bottom of C
+  Downstream (Customer) — consome o evento
+  Contrato: TransactionRegisteredMessage
+end note
+
+@enduml

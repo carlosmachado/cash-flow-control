@@ -1,0 +1,16 @@
+@startuml observability-topology
+title Observabilidade - coleta de métricas
+
+skinparam shadowing false
+left to right direction
+
+rectangle "transaction-service\n/actuator/prometheus" as TX
+rectangle "consolidation-service\n/actuator/prometheus" as CO
+rectangle "Prometheus" as P
+rectangle "Grafana" as G
+
+TX --> P : scrape
+CO --> P : scrape
+P --> G : datasource
+
+@enduml
