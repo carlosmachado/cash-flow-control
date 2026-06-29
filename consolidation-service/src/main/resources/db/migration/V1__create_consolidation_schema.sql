@@ -29,3 +29,11 @@ CREATE INDEX IF NOT EXISTS daily_transaction_idx_date ON consolidation.daily_tra
 INSERT INTO consolidation.balance (id, created_at, updated_at, currency, amount)
 VALUES ('00000000-0000-0000-0000-000000000001', now(), now(), 'BRL', 0.00)
 ON CONFLICT (id) DO NOTHING;
+
+-- Idempotency marker: a transaction is applied to the balance at most once.
+CREATE TABLE IF NOT EXISTS consolidation.balance_applied
+(
+    transaction_id UUID      NOT NULL,
+    applied_at     TIMESTAMP NOT NULL,
+    PRIMARY KEY (transaction_id)
+);

@@ -11,7 +11,7 @@ System_Boundary(cfc, "Cash Flow Control") {
   System(cons, "consolidation-service", "Saldo consolidado e relatório diário")
 }
 
-Rel(merchant, tx, "Registra/consulta lançamentos", "HTTPS/REST")
+Rel_R(merchant, tx, "Registra/consulta lançamentos", "HTTPS/REST")
 Rel(merchant, cons, "Consulta saldo e relatório diário", "HTTPS/REST")
 Rel(tx, cons, "Eventos de lançamento", "RabbitMQ (assíncrono)")
 

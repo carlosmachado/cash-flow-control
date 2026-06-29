@@ -1,5 +1,6 @@
 package br.com.cmachado.cashflow.consolidation.domain.service;
 
+import br.com.cmachado.cashflow.consolidation.domain.model.balance.AppliedTransactionRepository;
 import br.com.cmachado.cashflow.consolidation.domain.model.balance.Balance;
 import br.com.cmachado.cashflow.consolidation.domain.model.balance.BalanceId;
 import br.com.cmachado.cashflow.consolidation.domain.model.balance.BalanceRepository;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,18 +28,20 @@ class BalanceConsolidatorServiceTest {
 
     @Mock
     BalanceRepository balanceRepository;
+    @Mock
+    AppliedTransactionRepository appliedTransactionRepository;
 
-    private TransactionRegisteredMessage message(String amount) {
-        return new TransactionRegisteredMessage(
-                UUID.randomUUID().toString(), "CREDIT", new BigDecimal(amount), "BRL", LocalDateTime.now());
+    private TransactionRegisteredMessage message(String id, String amount) {
+        return new TransactionRegisteredMessage(id, "CREDIT", new BigDecimal(amount), "BRL", LocalDateTime.now());
     }
 
     @Test
     void applies_signed_amount_to_a_fresh_balance() {
         when(balanceRepository.findByIdForUpdate(any(BalanceId.class))).thenReturn(Optional.empty());
+        when(appliedTransactionRepository.existsById(any(UUID.class))).thenReturn(false);
 
-        var service = new BalanceConsolidatorService(balanceRepository);
-        service.consolidate(message("100.00"));
+        var service = new BalanceConsolidatorService(balanceRepository, appliedTransactionRepository);
+        service.consolidate(message(UUID.randomUUID().toString(), "100.00"));
 
         var captor = ArgumentCaptor.forClass(Balance.class);
         verify(balanceRepository).save(captor.capture());
@@ -49,10 +53,26 @@ class BalanceConsolidatorServiceTest {
         var existing = Balance.start();
         existing.apply(Money.of("100.00"));
         when(balanceRepository.findByIdForUpdate(any(BalanceId.class))).thenReturn(Optional.of(existing));
+        when(appliedTransactionRepository.existsById(any(UUID.class))).thenReturn(false);
 
-        var service = new BalanceConsolidatorService(balanceRepository);
-        service.consolidate(message("-30.00"));
+        var service = new BalanceConsolidatorService(balanceRepository, appliedTransactionRepository);
+        service.consolidate(message(UUID.randomUUID().toString(), "-30.00"));
 
         assertThat(existing.getAmount().getValue()).isEqualByComparingTo("70.00");
+    }
+
+    @Test
+    void duplicate_delivery_is_ignored() {
+        var existing = Balance.start();
+        existing.apply(Money.of("100.00"));
+        when(balanceRepository.findByIdForUpdate(any(BalanceId.class))).thenReturn(Optional.of(existing));
+        when(appliedTransactionRepository.existsById(any(UUID.class))).thenReturn(true);
+
+        var service = new BalanceConsolidatorService(balanceRepository, appliedTransactionRepository);
+        service.consolidate(message(UUID.randomUUID().toString(), "50.00"));
+
+        assertThat(existing.getAmount().getValue()).isEqualByComparingTo("100.00");
+        verify(balanceRepository, never()).save(any());
+        verify(appliedTransactionRepository, never()).save(any());
     }
 }

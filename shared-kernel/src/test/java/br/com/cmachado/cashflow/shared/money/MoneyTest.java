@@ -41,4 +41,11 @@ class MoneyTest {
         assertThat(Money.of("10.00").sum(Money.of("-4.00")).getValue())
                 .isEqualByComparingTo(new BigDecimal("6.00"));
     }
+
+    @Test
+    void isNegative_handles_fractional_values() {
+        assertThat(Money.isNegative(Money.of("-0.50"))).isTrue();
+        assertThat(Money.isNegative(Money.of("0.50"))).isFalse();
+        assertThat(Money.isNegative(Money.of("0.00"))).isFalse();
+    }
 }

@@ -74,7 +74,7 @@ public class Money implements ValueObject<Money> {
     }
 
     public static boolean isNegative(Money money) {
-        return money.value.longValue() < 0;
+        return money.value.signum() < 0;
     }
 
     @Override

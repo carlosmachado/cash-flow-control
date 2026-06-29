@@ -15,13 +15,13 @@ System_Boundary(cfc, "Cash Flow Control") {
 
 System_Ext(obs, "Prometheus + Grafana", "Métricas via /actuator/prometheus")
 
-Rel(client, txapi, "Registra/lista lançamentos", "HTTPS/REST")
+Rel_R(client, txapi, "Registra/lista lançamentos", "HTTPS/REST")
 Rel(client, consapi, "Consulta saldo/relatório", "HTTPS/REST")
 Rel(txapi, pg, "Lê/grava schema transaction", "JDBC")
 Rel(txapi, rmq, "Publica eventos (via outbox)", "AMQP")
 Rel(rmq, consapi, "Entrega eventos", "AMQP")
-Rel(consapi, pg, "Lê/grava schema consolidation", "JDBC")
-Rel(obs, txapi, "Scrape métricas", "HTTP")
+Rel_L(consapi, pg, "Lê/grava schema consolidation", "JDBC")
+Rel_U(obs, txapi, "Scrape métricas", "HTTP")
 Rel(obs, consapi, "Scrape métricas", "HTTP")
 
 @enduml
