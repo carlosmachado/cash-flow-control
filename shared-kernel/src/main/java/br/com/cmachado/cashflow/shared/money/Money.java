@@ -9,9 +9,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.format.annotation.NumberFormat;
 
+import javax.money.MonetaryAmount;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Monetary value object. Persisted as a plain {@code BigDecimal} column, but all
+ * arithmetic delegates to JavaMoney (JSR-354 / Moneta) using {@link Currency#CODE}.
+ */
 @EqualsAndHashCode
 @Embeddable
 @Getter
@@ -46,6 +51,14 @@ public class Money implements ValueObject<Money> {
         return new Money(value);
     }
 
+    private static Money of(MonetaryAmount amount) {
+        return of(amount.getNumber().numberValue(BigDecimal.class));
+    }
+
+    private MonetaryAmount toMonetary() {
+        return org.javamoney.moneta.Money.of(value, Currency.CODE);
+    }
+
     public BigDecimal getValue() {
         return this.value;
     }
@@ -56,11 +69,11 @@ public class Money implements ValueObject<Money> {
     }
 
     public Money sum(Money money) {
-        return Money.of(this.value.add(money.value));
+        return of(toMonetary().add(money.toMonetary()));
     }
 
     public static Money sum(Money... moneys) {
-        var sum = Money.of(BigDecimal.ZERO);
+        var sum = Money.ZERO;
 
         for (var money : moneys)
             sum = sum.sum(money);
@@ -69,20 +82,19 @@ public class Money implements ValueObject<Money> {
     }
 
     public Money subtract(Money money) {
-        var subtract = this.value.subtract(money.value);
-        return Money.of(subtract);
+        return of(toMonetary().subtract(money.toMonetary()));
     }
 
     public static boolean isNegative(Money money) {
-        return money.value.signum() < 0;
+        return money.toMonetary().isNegative();
+    }
+
+    public Money multiply(int value) {
+        return of(toMonetary().multiply(value));
     }
 
     @Override
     public String toString() {
         return value.toString();
-    }
-
-    public Money multiply(int value) {
-        return Money.of(this.value.multiply(new BigDecimal(value)));
     }
 }

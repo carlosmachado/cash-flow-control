@@ -12,8 +12,10 @@ import lombok.Getter;
 @Embeddable
 @Getter
 public class Currency implements ValueObject<Currency> {
+    public static final String CODE = "BRL";
+
     @Embedded
-    public static final Currency BRL = new Currency("BRL");
+    public static final Currency BRL = new Currency(CODE);
 
     @NotNull(message = "code is required")
     @Column(name = "currency", nullable = false, length = 10)
