@@ -21,7 +21,7 @@ Pico de **50 req/s** no consolidado com **≤ 5% de perda** (RNF2/RNF3).
 | Concorrência de consumidores | `RABBITMQ_CONCURRENCY` / `RABBITMQ_MAX_CONCURRENCY` | Mais threads processando a fila |
 | Escala horizontal | réplicas do `consolidation-service` | RabbitMQ distribui (round-robin) entre instâncias |
 | Prefetch | `prefetch=20` | Lote de mensagens em voo por consumidor |
-| Intervalo do dispatcher | `outbox.dispatch.fixed-delay` | Latência de publicação dos lançamentos |
+| Intervalo do dispatcher | `outbox.dispatch.fixed-delay` (padrão 500 ms) | Latência de publicação dos lançamentos; ShedLock garante que apenas uma instância executa por ciclo |
 
 A 50 msg/s, cada mensagem é um upsert simples; com 4–16 consumidores e prefetch
 20, a vazão sustentada fica muito acima de 50/s. O gargalo prático é o banco, que
@@ -31,7 +31,8 @@ escala verticalmente e por índice (`daily_transaction_idx_date`).
 
 O `transaction-service` é stateless no caminho de escrita — escala
 horizontalmente atrás de um load balancer; cada instância grava transação +
-outbox atomicamente.
+outbox atomicamente. O dispatcher do outbox usa **ShedLock** para coordenar
+entre réplicas: somente uma instância publica por ciclo, evitando duplicatas.
 
 ## Modelo de threads
 

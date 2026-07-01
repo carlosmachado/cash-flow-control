@@ -24,6 +24,7 @@ Diagrama (PlantUML): [../diagrams/resilience-flow.puml](../diagrams/resilience-f
 | Mensagem reprocessada | Consumidor idempotente (`existsByTransactionId`) |
 | Falha ao publicar um item | Dispatcher trata por item e segue para o próximo (`retry`) |
 | Reinício do broker | Filas `durable=true` |
+| Múltiplas instâncias do dispatcher | ShedLock garante execução exclusiva por ciclo (lock na tabela `transaction.shedlock`) |
 
 ## Teste de resiliência (manual)
 

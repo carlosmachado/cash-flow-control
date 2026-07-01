@@ -1,6 +1,7 @@
 package br.com.cmachado.cashflow.transaction.infrastructure.outbox.dispatcher;
 
 import br.com.cmachado.cashflow.transaction.infrastructure.outbox.OutBoxRepository;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,8 @@ public class DispatchOutBoxScheduling {
         this.queueDispatcherFactory = queueDispatcherFactory;
     }
 
-    @Scheduled(fixedDelayString = "${outbox.dispatch.fixed-delay:5000}")
+    @Scheduled(fixedDelayString = "${outbox.dispatch.fixed-delay:500}")
+    @SchedulerLock(name = "outbox-dispatcher", lockAtMostFor = "PT10S", lockAtLeastFor = "PT0S")
     public void execute() {
         var outBoxes = outBoxRepository.findByDispatchedFalseOrderByCreatedAt();
 

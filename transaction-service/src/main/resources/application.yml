@@ -33,7 +33,7 @@ timezone: America/Sao_Paulo
 
 outbox:
   dispatch:
-    fixed-delay: 5000
+    fixed-delay: 500
 
 app:
   security:
