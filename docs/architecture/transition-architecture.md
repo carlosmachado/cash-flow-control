@@ -1,7 +1,7 @@
 # Arquitetura de Transição
 
 O ponto de partida foi um **monolito** feito em 2023 com Spring Boot 2.4 (um único deployable) que
-já separava os contextos em pacotes e já usava outbox + RabbitMQ internamente.
+já separava os contextos em pacotes e já usava outbox + RabbitMQ internamente (mantido na branch main-2023).
 A transição para os dois serviços foi feita de forma incremental.
 
 Diagrama (PlantUML): [../diagrams/transition-phases.puml](../diagrams/transition-phases.puml)

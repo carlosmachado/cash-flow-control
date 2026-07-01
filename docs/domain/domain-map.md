@@ -7,11 +7,12 @@ oferecer visão consolidada do saldo.
 
 ## Capacidades de negócio → Bounded Contexts
 
-| Capacidade de negócio | Bounded Context | Deployable | Tipo |
-|-----------------------|-----------------|------------|------|
-| Registrar lançamentos (crédito/débito) | Lançamentos | `transaction-service` | Core |
-| Consolidar saldo e relatório diário | Consolidação | `consolidation-service` | Core |
-| Blocos de construção compartilhados (Money, DDD, contrato de integração) | Shared Kernel | `shared-kernel` (lib) | Supporting |
+
+| Capacidade de negócio                                                       | Bounded Context | Deployable              | Tipo       |
+| ---------------------------------------------------------------------------- | --------------- | ----------------------- | ---------- |
+| Registrar lançamentos (crédito/débito)                                    | Lançamentos    | `transaction-service`   | Core       |
+| Consolidar saldo e relatório diário                                        | Consolidação  | `consolidation-service` | Core       |
+| Blocos de construção compartilhados (Money, DDD, contrato de integração) | Shared Kernel   | `shared-kernel` (lib)   | Supporting |
 
 A separação segue **Domain-Driven Design**: cada contexto é um agregado coeso
 com sua própria linguagem ubíqua e seu próprio schema de dados.
@@ -24,15 +25,16 @@ evento `TransactionRegisteredMessage`, versionável de forma independente.
 
 ## Linguagem Ubíqua
 
-| Termo | Definição |
-|-------|-----------|
-| Lançamento (Transaction) | Movimentação financeira: crédito (positivo) ou débito (negativo). |
-| Crédito (Credit) | Lançamento que aumenta o saldo. Armazenado com valor positivo. |
-| Débito (Debit) | Lançamento que reduz o saldo. Armazenado com valor negativo. |
-| Saldo (Balance) | Soma acumulada de todos os lançamentos. Inicia em `BRL 0,00`. |
-| Consolidado diário (DailyTransaction) | Lançamentos agrupados por dia, com total do dia. |
-| Money | Value object monetário com escala 2 e moeda. |
-| Outbox | Tabela que garante publicação confiável do evento na mesma transação do lançamento. |
+
+| Termo                                  | Definição                                                                               |
+| -------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Lançamento (Transaction)              | Movimentação financeira: crédito (positivo) ou débito (negativo).                     |
+| Crédito (Credit)                      | Lançamento que aumenta o saldo. Armazenado com valor positivo.                           |
+| Débito (Debit)                        | Lançamento que reduz o saldo. Armazenado com valor negativo.                             |
+| Saldo (Balance)                        | Soma acumulada de todos os lançamentos. Inicia em `BRL 0,00`.                           |
+| Consolidado diário (DailyTransaction) | Lançamentos agrupados por dia, com total do dia.                                         |
+| Money                                  | Value object monetário com escala 2 e moeda.                                             |
+| Outbox                                 | Tabela que garante publicação confiável do evento na mesma transação do lançamento. |
 
 ## Invariantes de domínio
 

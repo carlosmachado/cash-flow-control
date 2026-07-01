@@ -4,7 +4,7 @@ title Arquitetura de Transição
 skinparam shadowing false
 left to right direction
 
-rectangle "Fase 0\nMonólito\nBoot 2.4 / Java 17" as F0
+rectangle "Fase 0\nMonolito\nBoot 2.4 / Java 17" as F0
 rectangle "Fase 1\nMulti-módulo Maven\nextrai shared-kernel" as F1
 rectangle "Fase 2\nSepara 2 deployables\nmesmo broker e DB" as F2
 rectangle "Fase 3\nEvent-carried state\nremove leitura cruzada" as F3

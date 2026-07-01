@@ -12,7 +12,7 @@ cash-flow-control/            parent pom (Spring Boot 3.3 / Java 21)
 ├── consolidation-service/    Consolidado  (porta 8081) — consumidor
 ├── docs/                     documentação de arquitetura (C4, ADRs, NFR, custo)
 ├── observability/            Prometheus + provisioning do Grafana
-└── docker-compose.yml        pg + rabbitmq + serviços + prometheus + grafana
+└── docker-compose.yml        postgres + rabbitmq + serviços + prometheus + grafana
 ```
 
 A documentação completa de arquitetura está em **[docs/](docs/README.md)**.
@@ -33,11 +33,7 @@ Spring Security (OAuth2 Resource Server), Testcontainers, Docker Compose.
 
 ## Pré-requisito de build
 
-O build exige **JDK 21** (o `java.version` é 21). Se o `java` padrão for outro:
-
-```bash
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # macOS
-```
+O build exige **JDK 21** (o `java.version` é 21).
 
 ## Rodar tudo com Docker (recomendado)
 
