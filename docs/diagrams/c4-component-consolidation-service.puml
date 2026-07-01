@@ -1,0 +1,40 @@
+@startuml c4-component-consolidation-service
+' C4 Level 3 - Components (consolidation-service)
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title consolidation-service - Component Diagram
+
+Container_Boundary(cs, "consolidation-service") {
+  Component(balCtrl, "BalanceRestController", "Spring MVC", "GET /balances")
+  Component(dtCtrl, "DailyTransactionRestController", "Spring MVC", "GET /daily-transactions/{date}")
+
+  Component(balListener, "BalanceUpdateListener", "AMQP Listener", "Consome balance_update; atualiza saldo global")
+  Component(dtListener, "DailyBalanceUpdateListener", "AMQP Listener", "Consome daily_balance_update; upsert por dia")
+
+  Component(balSvc, "BalanceConsolidatorService", "Domain Service", "Aplica lançamento no Balance; idempotente por transaction_id")
+  Component(dtSvc, "DailyTransactionReportService", "Domain Service", "Upsert de DailyTransaction por data")
+
+  Component(balance, "Balance", "Aggregate", "Saldo corrente acumulado (singleton)")
+  Component(dailyTx, "DailyTransaction + AppliedTransaction", "Entities", "Registro diário consolidado; guard de idempotência")
+
+  ContainerDb(pg, "PostgreSQL", "schema consolidation")
+}
+
+ContainerQueue(rmq, "RabbitMQ", "balance_update / daily_balance_update")
+
+Rel(rmq, balListener, "TransactionRegisteredMessage", "AMQP")
+Rel(rmq, dtListener, "TransactionRegisteredMessage", "AMQP")
+
+Rel(balListener, balSvc, "apply(message)")
+Rel(dtListener, dtSvc, "store(message)")
+
+Rel(balSvc, balance, "update balance")
+Rel(dtSvc, dailyTx, "upsert daily record")
+
+Rel_U(balSvc, pg, "save Balance + AppliedTransaction", "JDBC")
+Rel_R(dtSvc, pg, "save DailyTransaction", "JDBC")
+
+Rel(balCtrl, pg, "find Balance", "JDBC")
+Rel(dtCtrl, pg, "find DailyTransactions by date", "JDBC")
+
+@enduml

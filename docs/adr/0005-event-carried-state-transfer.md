@@ -11,11 +11,11 @@ que o RNF1 quer evitar.
 
 ## Decisão
 A mensagem `TransactionRegisteredMessage` carrega o **estado completo** do
-lançamento (id, tipo, valor já com sinal, moeda, data). O consolidado processa
+lançamento. O consolidado processa
 apenas a mensagem, sem nunca ler o schema de lançamentos.
 
 ## Consequências
-- (+) Consolidado totalmente independente do produtor (reforça RNF1).
+- (+) Consolidado totalmente independente do produtor.
 - (+) Consumidor idempotente por `transaction_id`.
-- (−) Contrato de evento precisa ser versionado com cuidado (evolução do payload).
-- (−) Pequena duplicação de dados entre serviços (aceitável e intencional).
+- (−) Contrato de evento precisa ser versionado com cuidado.
+- (−) Pequena duplicação de dados entre serviços.

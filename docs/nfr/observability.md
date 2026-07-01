@@ -6,7 +6,7 @@
 |--------|-----------|
 | Instrumentação | Spring Boot Actuator + Micrometer |
 | Coleta de métricas | Prometheus (`/actuator/prometheus`) |
-| Visualização | Grafana (datasource Prometheus provisionado) |
+| Visualização | Grafana (datasource + dashboard provisionados) |
 | Health | `/actuator/health` (readiness/liveness) |
 
 Ambos os serviços expõem `health, info, metrics, prometheus` e marcam as métricas
@@ -29,10 +29,24 @@ Configuração de scrape em [../../observability/prometheus.yml](../../observabi
 | **Backlog do outbox** | gauge custom de linhas `dispatched=false` (evolução) |
 | **Lag de consumo** | profundidade das filas RabbitMQ (RabbitMQ exporter) |
 
+## Dashboard Grafana
+
+Dashboard **Cash Flow Control** provisionado automaticamente em
+`observability/grafana/provisioning/dashboards/cash-flow.json`.
+
+Painéis:
+- **HTTP**: request rate, latência P99 (`histogram_quantile`), taxa de erros 5xx
+- **JVM**: heap, live threads, CPU, GC pause, GC overhead
+- **HikariCP**: conexões ativas/ociosas/pendentes, acquire P99
+- **RabbitMQ**: published/consumed/acknowledged rate, failed/rejected, conexões
+
+Histogramas habilitados via `management.metrics.distribution.percentiles-histogram`
+para `http.server.requests` e `hikaricp.connections.acquire`.
+
 ## Acesso local
 
 - Prometheus: http://localhost:9090
-- Grafana: http://localhost:3000 (login anônimo, role Admin)
+- Grafana: http://localhost:3000 (login anônimo, role Admin) → dashboard: `/d/cash-flow-control`
 - Métricas brutas: http://localhost:8080/actuator/prometheus e :8081
 
 ## Evolução futura

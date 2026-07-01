@@ -32,3 +32,9 @@ escala verticalmente e por índice (`daily_transaction_idx_date`).
 O `transaction-service` é stateless no caminho de escrita — escala
 horizontalmente atrás de um load balancer; cada instância grava transação +
 outbox atomicamente.
+
+## Modelo de threads
+
+Ambos os serviços rodam com **virtual threads** (`spring.threads.virtual.enabled=true`).
+Tomcat, `@Async` e os listeners do RabbitMQ usam virtual threads automaticamente,
+eliminando o pool de threads de plataforma como gargalo sob alta concorrência de I/O.

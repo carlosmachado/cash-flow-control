@@ -1,5 +1,5 @@
 @startuml transition-phases
-title Arquitetura de Transição (Legado -> Alvo)
+title Arquitetura de Transição
 
 skinparam shadowing false
 left to right direction

@@ -1,8 +1,8 @@
-# Arquitetura de Transição (Legado → Alvo)
+# Arquitetura de Transição
 
-O ponto de partida foi um **monólito** Spring Boot 2.4 (um único deployable) que
+O ponto de partida foi um **monolito** feito em 2023 com Spring Boot 2.4 (um único deployable) que
 já separava os contextos em pacotes e já usava outbox + RabbitMQ internamente.
-A transição para os dois serviços foi feita de forma incremental e de baixo risco.
+A transição para os dois serviços foi feita de forma incremental.
 
 Diagrama (PlantUML): [../diagrams/transition-phases.puml](../diagrams/transition-phases.puml)
 
@@ -17,14 +17,14 @@ Diagrama (PlantUML): [../diagrams/transition-phases.puml](../diagrams/transition
 3. **Event-carried state transfer** — antes o consolidado relia a `Transaction`
    pelo `transactionId`; agora a mensagem carrega o estado completo
    (`TransactionRegisteredMessage`), eliminando o acoplamento ao banco do
-   produtor. Esse é o passo que torna o RNF1 verdadeiro.
+   produtor.
 4. **Modernização** — upgrade para Spring Boot 3.3 / Java 21
    (`javax` → `jakarta`, springfox → springdoc), Actuator/Prometheus e segurança
    JWT acionável.
 
-## Estado futuro (fora do escopo do desafio)
+## Futuro
 
-- **DB por serviço** (instâncias separadas) para isolamento físico total — ver
+- **DB por serviço** (instâncias separadas) para isolamento físico — ver
   [../adr/0004-shared-database-schema-per-service.md](../adr/0004-shared-database-schema-per-service.md).
 - **CI/CD** + registry de imagens; **escala horizontal** do consolidado.
 - **DLQ** dedicada e política de retry/backoff explícita.

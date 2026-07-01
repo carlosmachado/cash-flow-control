@@ -5,8 +5,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.money.MonetaryAmount;
@@ -20,6 +22,7 @@ import java.math.RoundingMode;
 @EqualsAndHashCode
 @Embeddable
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Money implements ValueObject<Money> {
     @Embedded
     public static final Money ZERO = new Money(BigDecimal.ZERO);
@@ -28,9 +31,6 @@ public class Money implements ValueObject<Money> {
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     @Column(name = "amount", nullable = false, scale = 2)
     private BigDecimal value;
-
-    protected Money() {
-    }
 
     private Money(BigDecimal value) {
         this.value = value.setScale(2, RoundingMode.HALF_UP);

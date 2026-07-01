@@ -17,6 +17,6 @@ um tem suas próprias migrations Flyway.
 - (+) Menos infraestrutura para subir e operar localmente.
 - (+) Fronteira de dados ainda respeitada no nível de schema/código.
 - (−) Isolamento físico parcial: a instância é um ponto comum.
-- Ressalva: em produção, recomenda-se **instâncias separadas por serviço** para
+- Ressalva: em produção, talvez valha usar **instâncias separadas por serviço** para
   isolamento total de disponibilidade e escala. Ver
   [transition-architecture](../architecture/transition-architecture.md).

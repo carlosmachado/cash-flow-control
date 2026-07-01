@@ -4,8 +4,12 @@ import br.com.cmachado.cashflow.shared.ddd.ValueObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import com.github.f4b6a3.ulid.UlidCreator;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -13,13 +17,11 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Embeddable
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BalanceId implements ValueObject<BalanceId> {
     @NotNull(message = "value is required")
     @Column(name = "balance_id", columnDefinition = "uuid", nullable = false)
     private UUID value;
-
-    protected BalanceId() {
-    }
 
     private BalanceId(UUID value) {
         this.value = value;
@@ -38,7 +40,7 @@ public class BalanceId implements ValueObject<BalanceId> {
     }
 
     public static BalanceId generate() {
-        return new BalanceId(UUID.randomUUID());
+        return new BalanceId(UlidCreator.getMonotonicUlid().toUuid());
     }
 
     @Override

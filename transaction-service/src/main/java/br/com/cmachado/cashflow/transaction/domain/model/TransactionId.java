@@ -4,8 +4,12 @@ import br.com.cmachado.cashflow.shared.ddd.ValueObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import com.github.f4b6a3.ulid.UlidCreator;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -13,13 +17,11 @@ import java.util.UUID;
 @EqualsAndHashCode
 @Embeddable
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TransactionId implements ValueObject<TransactionId> {
     @NotNull(message = "value is required")
     @Column(name = "transaction_id", columnDefinition = "uuid", nullable = false)
     private UUID value;
-
-    protected TransactionId() {
-    }
 
     private TransactionId(UUID value) {
         this.value = value;
@@ -31,7 +33,7 @@ public class TransactionId implements ValueObject<TransactionId> {
     }
 
     public static TransactionId generate() {
-        return new TransactionId(UUID.randomUUID());
+        return new TransactionId(UlidCreator.getMonotonicUlid().toUuid());
     }
 
     @Override

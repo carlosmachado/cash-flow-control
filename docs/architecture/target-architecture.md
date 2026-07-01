@@ -23,24 +23,29 @@ Diagrama (PlantUML): [../diagrams/c4-container.puml](../diagrams/c4-container.pu
 
 Diagrama (PlantUML): [../diagrams/c4-component-transaction-service.puml](../diagrams/c4-component-transaction-service.puml)
 
+## C4 — Nível 3: Componentes (consolidation-service)
+
+Diagrama (PlantUML): [../diagrams/c4-component-consolidation-service.puml](../diagrams/c4-component-consolidation-service.puml)
+
 ## Fluxo de um lançamento (sequência)
 
 Diagrama (PlantUML): [../diagrams/sequence-transaction-flow.puml](../diagrams/sequence-transaction-flow.puml)
 
 O `POST /transactions` confirma para o cliente **antes** de qualquer interação
-com RabbitMQ ou com o consolidado — é isso que garante o RNF1.
+com RabbitMQ ou com o consolidado.
 
 ## Justificativa das escolhas
 
-| Decisão | Alternativas | Por quê |
-|---------|--------------|---------|
-| **Microsserviços (2 deployables)** | Monólito modular | RNF1 exige isolamento de disponibilidade entre lançamento e consolidado. ADR-0001. |
-| **Mensageria assíncrona (RabbitMQ)** | Chamada síncrona REST | Desacopla disponibilidade e faz load leveling do pico de 50 req/s. ADR-0002. |
-| **Transactional Outbox** | Publicar direto no broker | Evita perda de evento se o broker estiver fora; entrega ao menos uma vez. ADR-0003. |
-| **Event-carried state transfer** | Consumidor consultar o produtor | Mantém o consolidado independente do banco/serviço de lançamentos. ADR-0005. |
-| **Spring Boot 3 / Java 21** | Manter Boot 2.4 / Java 17 | LTS atual, Micrometer/observabilidade nativos, suporte. ADR-0006. |
-| **PostgreSQL** | NoSQL | Dados financeiros relacionais, consistência forte por serviço. |
-| **Banco compartilhado, schema por serviço** | DB por serviço | Simplicidade para o desafio; produção recomenda DB por serviço. ADR-0004. |
+
+| Decisão                                     | Alternativas                    | Por quê                                                                            |
+| -------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------- |
+| **Microsserviços (2 deployables)**          | Monólito modular               | RNF1 exige isolamento de disponibilidade entre lançamento e consolidado. ADR-0001. |
+| **Mensageria assíncrona (RabbitMQ)**        | Chamada síncrona REST          | Desacopla disponibilidade e serviços. ADR-0002.                                    |
+| **Transactional Outbox**                     | Publicar direto no broker       | Evita perda de evento se o broker estiver fora. ADR-0003.                           |
+| **Event-carried state transfer**             | Consumidor consultar o produtor | Mantém o consolidado independente do banco/serviço de lançamentos. ADR-0005.     |
+| **Spring Boot 3 / Java 21**                  | Manter Boot 2.4 / Java 17       | Suporte LTS, virtual threads, Micrometer/observabilidade nativos.                   |
+| **PostgreSQL**                               | NoSQL                           | Dados financeiros relacionais, consistência forte por serviço.                    |
+| **Banco compartilhado, schema por serviço** | DB por serviço                 | Simplicidade; produção recomenda DB por serviço. ADR-0004.                      |
 
 ## Mapeamento para código
 

@@ -1,0 +1,313 @@
+{
+  "title": "Cash Flow Control",
+  "uid": "cash-flow-control",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "query": "label_values(jvm_memory_used_bytes, application)",
+        "multi": true,
+        "includeAll": true,
+        "current": { "text": "All", "value": "$__all" },
+        "refresh": 2
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "HTTP",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
+      "id": 2,
+      "title": "Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 1, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "sum by (application, uri, method) (rate(http_server_requests_seconds_count{application=~\"$service\"}[1m]))",
+          "legendFormat": "{{application}} {{method}} {{uri}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "reqps", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 3,
+      "title": "P99 Latency (ms)",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 1, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (application, uri, le) (rate(http_server_requests_seconds_bucket{application=~\"$service\"}[1m]))) * 1000",
+          "legendFormat": "{{application}} {{uri}} p99"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Error Rate (5xx req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 1, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "sum by (application) (rate(http_server_requests_seconds_count{application=~\"$service\", status=~\"5..\"}[1m]))",
+          "legendFormat": "{{application}} 5xx"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2 },
+          "color": { "fixedColor": "red", "mode": "fixed" }
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": "row",
+      "title": "JVM",
+      "gridPos": { "x": 0, "y": 9, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
+      "id": 11,
+      "title": "Heap Used",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 10, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "sum by (application) (jvm_memory_used_bytes{application=~\"$service\", area=\"heap\"})",
+          "legendFormat": "{{application}} heap used"
+        },
+        {
+          "expr": "sum by (application) (jvm_memory_max_bytes{application=~\"$service\", area=\"heap\"})",
+          "legendFormat": "{{application}} heap max"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 12,
+      "title": "Live Threads",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 10, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads{application=~\"$service\"}",
+          "legendFormat": "{{application}} live"
+        },
+        {
+          "expr": "jvm_threads_daemon_threads{application=~\"$service\"}",
+          "legendFormat": "{{application}} daemon"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 13,
+      "title": "CPU Usage",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 10, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "process_cpu_usage{application=~\"$service\"}",
+          "legendFormat": "{{application}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0, "max": 1,
+          "custom": { "lineWidth": 2 }
+        }
+      }
+    },
+    {
+      "id": 14,
+      "title": "GC Pause Time",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 18, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_pause_seconds_sum{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} {{action}} {{cause}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 15,
+      "title": "GC Overhead",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 18, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "jvm_gc_overhead{application=~\"$service\"}",
+          "legendFormat": "{{application}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "custom": { "lineWidth": 2 }
+        }
+      }
+    },
+    {
+      "id": 20,
+      "type": "row",
+      "title": "Database Pool (HikariCP)",
+      "gridPos": { "x": 0, "y": 26, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
+      "id": 21,
+      "title": "Active / Idle / Pending Connections",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 27, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active{application=~\"$service\"}",
+          "legendFormat": "{{application}} active"
+        },
+        {
+          "expr": "hikaricp_connections_idle{application=~\"$service\"}",
+          "legendFormat": "{{application}} idle"
+        },
+        {
+          "expr": "hikaricp_connections_pending{application=~\"$service\"}",
+          "legendFormat": "{{application}} pending"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "min": 0, "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 22,
+      "title": "Connection Acquire P99 (ms)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 27, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (application, le) (rate(hikaricp_connections_acquire_seconds_bucket{application=~\"$service\"}[1m]))) * 1000",
+          "legendFormat": "{{application}} acquire p99"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 30,
+      "type": "row",
+      "title": "RabbitMQ",
+      "gridPos": { "x": 0, "y": 35, "w": 24, "h": 1 },
+      "collapsed": false
+    },
+    {
+      "id": 31,
+      "title": "Published / Consumed / Acknowledged (rate)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 36, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(rabbitmq_published_total{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} published"
+        },
+        {
+          "expr": "rate(rabbitmq_consumed_total{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} consumed"
+        },
+        {
+          "expr": "rate(rabbitmq_acknowledged_total{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} acknowledged"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "mps", "custom": { "lineWidth": 2 } }
+      }
+    },
+    {
+      "id": 32,
+      "title": "Failed / Rejected / Unrouted (rate)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 36, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rate(rabbitmq_failed_to_publish_total{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} failed-to-publish"
+        },
+        {
+          "expr": "rate(rabbitmq_rejected_total{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} rejected"
+        },
+        {
+          "expr": "rate(rabbitmq_unrouted_published_total{application=~\"$service\"}[1m])",
+          "legendFormat": "{{application}} unrouted"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "mps",
+          "custom": { "lineWidth": 2 },
+          "color": { "fixedColor": "orange", "mode": "fixed" }
+        }
+      }
+    },
+    {
+      "id": 33,
+      "title": "RabbitMQ Connections",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 44, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "targets": [
+        {
+          "expr": "rabbitmq_connections{application=~\"$service\"}",
+          "legendFormat": "{{application}} connections"
+        },
+        {
+          "expr": "rabbitmq_channels{application=~\"$service\"}",
+          "legendFormat": "{{application}} channels"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short", "min": 0, "custom": { "lineWidth": 2 } }
+      }
+    }
+  ]
+}
